@@ -1,15 +1,25 @@
 # Python / Django
-*.pyc
+venv/
+env/
 __pycache__/
+*.pyc
 db.sqlite3
-.env
+*.sqlite3
+media/
+staticfiles/
 
-# Node / React
+# React / Node
 node_modules/
 build/
 dist/
+npm-debug.log*
+yarn-error.log*
 
-# OS and editor files
-.DS_Store
+# Environment & secrets
+.env
+.env.local
+
+# IDE
 .vscode/
-*.log
+.idea/
+.DS_Store

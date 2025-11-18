@@ -1,0 +1,283 @@
+/* src/components/LoginForm.css */
+
+body.login-page {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+body.login-page::before,
+body.login-page::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
+  animation: float 20s ease-in-out infinite;
+  z-index: 0;
+}
+
+body.login-page::before {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+body.login-page::after {
+  width: 400px;
+  height: 400px;
+  bottom: -150px;
+  left: -150px;
+  animation-delay: 7s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-30px) rotate(180deg); }
+}
+
+.form-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  min-height: 450px;
+  background: white;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.15),
+              0 0 0 1px rgba(14, 165, 233, 0.1);
+  border-radius: 24px;
+  box-sizing: border-box;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  z-index: 1000;
+  animation: slideIn 0.5s ease-out;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
+
+.title {
+  text-align: center;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  margin: 10px 0 30px 0;
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+  border-radius: 2px;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 15px;
+}
+
+.input {
+  border-radius: 12px;
+  border: 2px solid #e0f2fe;
+  outline: 0 !important;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  font-size: 14px;
+  color: #1a3a52;
+}
+
+.input::placeholder {
+  color: #a1a5b3;
+}
+
+.input:focus {
+  border-color: #0ea5e9;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+  transform: translateY(-2px);
+}
+
+.input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error-text {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  border-left: 3px solid #ef4444;
+  margin-bottom: 10px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+.page-link {
+  text-decoration: underline;
+  margin: 0;
+  text-align: end;
+  color: #6c757d;
+  text-decoration-color: #6c757d;
+}
+
+.page-link-label {
+  cursor: pointer;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: #0ea5e9;
+  text-decoration-color: #0ea5e9;
+  transition: all 0.3s ease;
+}
+
+.page-link-label:hover {
+  color: #06b6d4;
+  text-decoration-color: #06b6d4;
+}
+
+.form-btn {
+  padding: 14px 20px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  border-radius: 12px;
+  border: 0 !important;
+  outline: 0 !important;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+  transition: all 0.35s ease;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  font-size: 16px;
+}
+
+.form-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.form-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.form-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0284c7 0%, #0891b2 100%);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
+  transform: translateY(-3px);
+}
+
+.form-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 3px 12px rgba(14, 165, 233, 0.2);
+}
+
+.form-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sign-up-label {
+  margin: 0;
+  font-size: 10px;
+  color: #6c757d;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.sign-up-link {
+  margin-left: 1px;
+  font-size: 11px;
+  text-decoration: underline;
+  text-decoration-color: #0ea5e9;
+  color: #0ea5e9;
+  cursor: pointer;
+  font-weight: 800;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.sign-up-link:hover {
+  color: #06b6d4;
+  text-decoration-color: #06b6d4;
+}
+
+.buttons-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 20px;
+  gap: 15px;
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    width: 90%;
+    padding: 20px 25px;
+  }
+  .title {
+    font-size: 28px;
+  }
+}

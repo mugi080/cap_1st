@@ -1,0 +1,200 @@
+/* Product Detail Page */
+.product-detail-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .product-detail-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .product-detail-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+  }
+  
+  .product-rating {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #ff9800;
+  }
+  
+  .product-detail-body {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+  
+  .product-image {
+    flex: 1;
+    max-width: 500px;
+  }
+  
+  .product-image-img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .product-info {
+    flex: 2;
+    margin-left: 20px;
+  }
+  
+  .product-info p {
+    font-size: 1.rem;
+    margin: 10px 0;
+  }
+  
+  .product-info .price {
+    font-size: 1.5rem;
+    color: #000000;
+    font-weight: bold;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  .add-to-cart-btn,
+  .buy-now-btn {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-to-cart-btn {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .buy-now-btn {
+    background-color: #2196f3;
+    color: white;
+  }
+  
+  .add-to-cart-btn:hover,
+  .buy-now-btn:hover {
+    opacity: 0.8;
+  }
+  
+  .product-description {
+    margin-top: 40px;
+  }
+  
+  .product-description h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  
+  .product-description p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .loading,
+  .error {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #ff5722;
+    margin-top: 20px;
+  }
+  
+
+  /* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: scaleIn 0.2s ease;
+}
+
+.modal-content h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.modal-content p {
+  color: #555;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn.cancel {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.modal-btn.cancel:hover {
+  background: #ccc;
+}
+
+.modal-btn.confirm {
+  background: #008080;
+  color: white;
+}
+
+.modal-btn.confirm:hover {
+  background: #006666;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Prevent body scroll when modal is open */
+.modal-overlay ~ * {
+  overflow: hidden;
+}

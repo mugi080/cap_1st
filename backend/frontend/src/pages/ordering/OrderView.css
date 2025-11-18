@@ -1,0 +1,469 @@
+/* OrderView.css - Receipt-Style Layout with Orange-Red Theme */
+
+.orders-page {
+  padding: 32px 16px;
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Courier New', 'Courier', monospace;
+  background: linear-gradient(135deg, #fff5f0 0%, #ffe8e0 50%, #fff0eb 100%);
+  min-height: 100vh;
+  color: #111827;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.orders-page > p {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 32px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* View History Button Container */
+.orders-page > div:first-of-type {
+  margin-bottom: 40px;
+}
+
+/* View History Button */
+.orders-page button[class*="bg-blue"] {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%) !important;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+  transition: all 0.3s ease;
+  border: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.orders-page button[class*="bg-blue"]:hover {
+  background: linear-gradient(135deg, #ff5722 0%, #ff3838 100%) !important;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+  transform: scale(1.05) translateY(-2px) !important;
+}
+
+/* Loading Spinner */
+.animate-spin {
+  border-color: #ff6b35 !important;
+}
+
+/* Status Section Cards */
+.orders-page > div > div > div[class*="bg-white rounded-2xl"] {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 107, 53, 0.1);
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+  transition: all 0.3s ease;
+}
+
+/* Section Headers */
+.orders-page h2 {
+  color: #1f2937;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(255, 107, 53, 0.2);
+  padding-bottom: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Order Cards - Receipt Style */
+.orders-page > div > div > div > div > div[class*="border border-gray-200"] {
+  background: white;
+  border: 3px dashed #d1d5db !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.orders-page > div > div > div > div > div[class*="border border-gray-200"]:hover {
+  border-color: #ff6b35 !important;
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.2);
+  transform: translateY(-4px);
+}
+
+/* Receipt perforation effect at top */
+.orders-page > div > div > div > div > div[class*="border border-gray-200"]::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 8px,
+    white 8px,
+    white 16px
+  );
+  border-radius: 12px 12px 0 0;
+}
+
+/* Order Header */
+.orders-page h3 {
+  color: #1f2937;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px dashed #e5e7eb;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+/* Order Date/Time */
+.orders-page h3 + p {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+/* Status Badges */
+span[class*="bg-yellow-100"] {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  color: #b45309 !important;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(180, 83, 9, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Courier New', monospace;
+}
+
+span[class*="bg-blue-100"] {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  color: #1e40af !important;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(30, 64, 175, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Courier New', monospace;
+}
+
+span[class*="bg-purple-100"] {
+  background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%) !important;
+  color: #7c3aed !important;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Courier New', monospace;
+}
+
+span[class*="bg-gray-100"][class*="text-gray-600"] {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+  color: #4b5563 !important;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(75, 85, 99, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Total Amount Section */
+.orders-page > div > div > div > div > div > div:nth-child(2) {
+  border-top: 2px dashed #e5e7eb;
+  border-bottom: 2px dashed #e5e7eb;
+  padding: 16px 0;
+  margin: 16px 0;
+}
+
+.orders-page p[class*="text-sm text-gray-600"]:first-child {
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.orders-page p[class*="text-2xl font-bold"] {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+/* Receipt Items Section - MORE SPACING */
+.orders-page div[class*="bg-gray-50 rounded-lg"] {
+  background: #fafafa;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px !important;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Receipt Items - Better Spacing */
+.orders-page div[class*="bg-gray-50 rounded-lg"] > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px dotted #d1d5db;
+  transition: background 0.2s ease;
+}
+
+.orders-page div[class*="bg-gray-50 rounded-lg"] > div:last-of-type {
+  border-bottom: none;
+}
+
+.orders-page div[class*="bg-gray-50 rounded-lg"] > div:hover {
+  background: rgba(255, 107, 53, 0.05);
+  border-radius: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* Item Name and Quantity (left side) */
+.orders-page div[class*="bg-gray-50 rounded-lg"] > div > span:first-child {
+  text-align: left;
+  word-break: break-word;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Item Price (right side) */
+.orders-page div[class*="bg-gray-50 rounded-lg"] > div > span:last-child {
+  text-align: right;
+  font-weight: 700;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+/* Receipt Total Line */
+.orders-page div[class*="border-t border-gray-300"] {
+  border-top: 3px double #ff6b35 !important;
+  margin-top: 12px !important;
+  padding-top: 12px !important;
+  color: #1f2937;
+  font-weight: 800;
+  font-size: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+}
+
+.orders-page div[class*="border-t border-gray-300"] > span:first-child {
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.orders-page div[class*="border-t border-gray-300"] > span:last-child {
+  text-align: right;
+  color: #ff6b35;
+}
+
+/* Payment Info Section */
+.orders-page div[class*="border-t border-gray-200"]:not([class*="border-gray-300"]) {
+  border-top: 2px dashed #e5e7eb !important;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.orders-page div[class*="border-t border-gray-200"] p {
+  color: #4b5563;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Action Buttons */
+button[class*="bg-red-500"] {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button[class*="bg-red-500"]:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
+}
+
+button[class*="bg-gray-600"] {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button[class*="bg-gray-600"]:hover {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
+  box-shadow: 0 6px 16px rgba(75, 85, 99, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Expired Message */
+p[class*="text-gray-400 italic"] {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.875rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Loading State */
+.orders-page div[class*="animate-spin"] {
+  border-color: #e5e7eb;
+  border-top-color: #ff6b35 !important;
+}
+
+/* Error State */
+.orders-page div[class*="text-red-500"] {
+  color: #ef4444;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .orders-page {
+    padding: 24px 16px;
+  }
+
+  /* 2 columns on tablet */
+  .orders-page > div > div > div > div {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-page {
+    padding: 24px 12px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .orders-page > p {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  /* Stack order cards vertically on mobile */
+  .orders-page > div > div > div > div {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Adjust card padding */
+  .orders-page > div > div > div > div > div[class*="border border-gray-200"] {
+    padding: 20px !important;
+  }
+
+  /* Smaller total amount text */
+  .orders-page p[class*="text-2xl font-bold"] {
+    font-size: 1.75rem;
+  }
+
+  /* Receipt items - smaller font */
+  .orders-page div[class*="bg-gray-50 rounded-lg"] {
+    font-size: 0.8125rem;
+    padding: 16px !important;
+  }
+
+  /* Button adjustments */
+  button {
+    font-size: 0.875rem;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .orders-page > p {
+    font-size: 0.9375rem;
+  }
+
+  /* More compact receipt */
+  .orders-page div[class*="bg-gray-50 rounded-lg"] {
+    font-size: 0.75rem;
+    padding: 12px !important;
+    line-height: 1.6;
+  }
+
+  /* Smaller gap between items */
+  .orders-page div[class*="bg-gray-50 rounded-lg"] > div {
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  /* Smaller buttons */
+  button {
+    font-size: 0.8125rem;
+    padding: 8px 14px;
+  }
+
+  /* Compact order header */
+  .orders-page h3 {
+    font-size: 1rem;
+  }
+
+  /* Smaller status badge */
+  span[class*="inline-block"] {
+    font-size: 0.6875rem;
+    padding: 4px 10px;
+  }
+}
+
+/* Smooth Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.orders-page > div > div > div {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Custom Scrollbar */
+.orders-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.orders-page::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.orders-page::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff6b35 0%, #ff4757 100%);
+  border-radius: 10px;
+}
+
+.orders-page::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff5722 0%, #ff3838 100%);
+}

@@ -1,0 +1,95 @@
+/* Drivers.css */
+.drivers-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.drivers-container h2 {
+  text-align: center;
+  color: #1e2a38;
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 30px 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.drivers-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.drivers-table th,
+.drivers-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.drivers-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.drivers-table tr:hover {
+  background-color: #f9f9fb;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-available {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-preparing {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-on-delivery {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .drivers-container {
+    padding: 12px;
+  }
+
+  .drivers-table th,
+  .drivers-table td {
+    padding: 10px 8px;
+    font-size: 0.9rem;
+  }
+
+  .drivers-table th,
+  .drivers-table td {
+    white-space: nowrap;
+  }
+}

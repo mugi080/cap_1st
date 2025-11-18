@@ -1,0 +1,8 @@
+python manage.py shell
+
+from django.contrib.sites.models import Site
+site = Site.objects.get(id=1)
+site.domain = "localhost:5173"   # <-- or use your deployed domain!
+site.name = "Bottle Flow"
+site.save()
+

@@ -1,0 +1,83 @@
+/* src/components/admin/css/AdminSidebar.css */
+
+.admin-sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  height: calc(100vh - 60px);
+  width: 250px;
+  background-color: #1a202c;
+  color: white;
+  transition: transform 0.3s ease;
+  z-index: 1001;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.sidebar-title {
+  text-align: center;
+  padding: 10px 0;
+  margin: 0 0 20px;
+  font-size: 1.3rem;
+  color: #e0e0ff;
+  border-bottom: 1px solid #2d3748;
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 12px 24px;
+  color: #cbd5e0;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+  color: white;
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  font-weight: 600;
+  border-left: 4px solid #667eea;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close-btn {
+    display: block;
+  }
+
+  .sidebar-link {
+    font-size: 1rem;
+    padding: 12px 20px;
+  }
+}

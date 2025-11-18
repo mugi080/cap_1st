@@ -1,0 +1,34 @@
+/* src/admin/components/css/AdminLayout.css */
+
+.admin-content {
+  display: flex;
+  width: 100%;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+/* Mobile overlay */
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+  }
+
+  .admin-main {
+    padding: 20px 10px;
+  }
+}

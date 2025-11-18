@@ -1,15 +1,161 @@
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@import "tailwindcss";
+
+/* === Shared Design Tokens (Option 1 – Clean Blue Minimal) === */
+:root {
+  --primary-gradient: linear-gradient(135deg, #1a73e8 0%, #4dabf7 100%);
+  --text-primary: #0d1b2a;
+  --text-secondary: #4a5568;
+
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.2);
+
+  --shadow-light: 0 4px 20px rgba(26, 115, 232, 0.25);
+
+  --font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+/* === Admin Layout === */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: row;
+}
+
+/* === Admin Navbar (Glass Blue Style) === */
+.admin-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-light);
+  font-family: var(--font-family);
+  transition: all 0.3s ease;
+}
+
+.admin-navbar h1 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+/* Navbar buttons (Blue Gradient) */
+.admin-navbar button {
+  padding: 8px 16px;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  background: var(--primary-gradient);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(26, 115, 232, 0.3);
+}
+
+.admin-navbar button:hover {
+  background: linear-gradient(135deg, #0d6efd 0%, #74b4fa 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(26, 115, 232, 0.35);
+}
+
+.admin-navbar button:active {
+  transform: translateY(0);
+}
+
+/* === Admin Sidebar (Glass Blue Panel) === */
+.admin-sidebar {
+  width: 250px;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  height: calc(100vh - 60px);
+  padding: 24px 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-light);
+  box-sizing: border-box;
+  z-index: 15;
+  transition: all 0.3s ease;
+  font-family: var(--font-family);
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-sidebar li {
+  margin: 12px 0;
+}
+
+.admin-sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.admin-sidebar a:hover {
+  background: rgba(26, 115, 232, 0.12);
+  color: #1a73e8;
+  transform: translateX(4px);
+}
+
+/* Active link */
+.admin-sidebar a.active {
+  background: rgba(26, 115, 232, 0.2);
+  color: #1a73e8;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.25);
+}
+
+/* === Main Content Area === */
+.admin-content {
+  margin-left: 250px;
+  margin-top: 60px;
+  padding: 24px;
+  flex-grow: 1;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+  font-family: var(--font-family);
+}
+
+/* Scroll adjustment for anchor links */
+.landing-page section {
+  scroll-margin-top: 70px;
+}
+
+/* === Mobile Responsive === */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 200px;
   }
-  
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    scroll-behavior: smooth;
-    padding-top: 100px;
+
+  .admin-content {
+    margin-left: 0;
+    padding: 16px;
   }
-  
+}

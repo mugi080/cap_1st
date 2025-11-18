@@ -1,3 +1,5 @@
+#backend
+
 pip install django djangorestframework django-cors-headers
 
 
@@ -5,7 +7,16 @@ pip install pillow
 
 pip install djangorestframework-simplejwt
 
+pip install djoser
 
+pip install geopy
+
+pip install reportlab
+
+
+
+
+#frontend
 
 npm install -g create-vite
 
@@ -16,3 +27,41 @@ npm install
 npm install axios
 
 npm install react-router-dom
+
+npm install tailwindcss @tailwindcss/vite
+npm install -g npm
+
+
+npm install react-icons
+
+
+npm install react-modal
+
+npm install leaflet react-leaflet
+npm install react-leaflet
+
+npm install leaflet-control-geocoder
+npm install leaflet-geosearch
+
+npm install  @maptiler/leaflet-maptilersdk 
+
+
+
+
+
+npm install @react-google-maps/api
+
+
+install tuturial sa github
+cd backend/
+python -m venv venv
+source venv/bin/activate   # use `venv\Scripts\activate` on Windows
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+
+
+cd frontend/
+npm install
+npm run dev

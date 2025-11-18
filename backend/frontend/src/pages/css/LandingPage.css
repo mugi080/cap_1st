@@ -1,0 +1,70 @@
+/* Landing Page Global Styles */
+.landing-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.landing-page section {
+  width: 100%;
+  scroll-margin-top: 80px; /* Accounts for fixed navbar */
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Section spacing consistency */
+#home,
+#about,
+#products,
+#reviews,
+#contact {
+  position: relative;
+}
+
+/* Ensure sections take full width */
+.landing-page > section {
+  max-width: 100%;
+  margin: 0;
+}
+
+/* Optional: Add subtle section separators */
+#about::before,
+#products::before,
+#reviews::before,
+#contact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 1200px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 0, 0, 0.05) 50%,
+    transparent
+  );
+}
+
+/* Remove separator for sections with gradient backgrounds */
+#home::before,
+#contact::before {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .landing-page section {
+    scroll-margin-top: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-page section {
+    scroll-margin-top: 70px;
+  }
+}
