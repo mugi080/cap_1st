@@ -1,0 +1,219 @@
+/* src/pages/admin/css/AdminRoleRequests.css */
+
+.role-requests-container {
+  padding: 40px 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
+  min-height: 100vh;
+  color: #222;
+  font-size: 14px;
+}
+
+.role-requests-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #222 0%, #ff4757 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 30px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading & Error States */
+.role-requests-container p {
+  text-align: center;
+  padding: 24px;
+  font-size: 16px;
+  color: #555;
+}
+
+.role-requests-container p.error {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Requests List */
+.requests-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.request-item {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.1);
+  transition: all 0.2s ease;
+}
+
+.request-item:hover {
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.15);
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.user-email {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1a73e8;
+}
+
+.requested-role {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #0d47a1;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.message-section {
+  margin: 16px 0;
+  padding: 16px;
+  background: #f8f9fa;
+  border-left: 4px solid #1a73e8;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #444;
+  font-size: 14px;
+}
+
+.message-section strong {
+  font-style: normal;
+  color: #222;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-approve,
+.btn-reject {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.btn-approve {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+}
+
+.btn-approve:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn-reject {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+}
+
+.btn-reject:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: #888;
+  font-size: 18px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .role-requests-container {
+    padding: 30px 20px;
+    font-size: 13px;
+  }
+
+  .role-requests-container h2 {
+    font-size: 1.7rem;
+    margin-bottom: 24px;
+  }
+
+  .request-item {
+    padding: 20px;
+  }
+
+  .request-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .role-requests-container {
+    padding: 20px 16px;
+  }
+
+  .role-requests-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .request-item {
+    padding: 16px;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    font-size: 12px;
+    padding: 10px;
+  }
+}

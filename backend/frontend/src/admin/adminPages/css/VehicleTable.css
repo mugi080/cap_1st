@@ -8,7 +8,8 @@
   font-size: 14px;
 }
 
-/* === Header === */
+/* All styles below are scoped to .vehicle-container */
+
 .vehicle-container h2 {
   font-size: 2rem;
   font-weight: 700;
@@ -39,7 +40,7 @@
 }
 
 /* === Form Wrapper === */
-.form-wrapper {
+.vehicle-container .form-wrapper {
   background: white;
   padding: 20px;
   border-radius: 12px;
@@ -48,7 +49,7 @@
   border: 1px solid rgba(255, 71, 87, 0.1);
 }
 
-.form-wrapper h3 {
+.vehicle-container .form-wrapper h3 {
   margin-top: 0;
   margin-bottom: 16px;
   background: linear-gradient(135deg, #222 0%, #ff4757 100%);
@@ -59,103 +60,105 @@
 }
 
 /* === Vehicle Form === */
-.vehicle-form {
+.vehicle-container .vehicle-form {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   align-items: end;
 }
 
-.vehicle-form input {
-  padding: 8px 12px;
+.vehicle-container .vehicle-form input {
+  width: 100%;
+  padding: 10px 14px;
   border: 2px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: 8px;
   background: white;
-  font-size: 13px;
-  flex: 1;
-  min-width: 140px;
+  font-size: 14px;
   font-weight: 500;
   transition: all 0.3s ease;
   color: #333;
+  box-sizing: border-box;
 }
 
-.vehicle-form input::placeholder {
+.vehicle-container .vehicle-form input::placeholder {
   color: #999;
 }
 
-.vehicle-form input:hover {
+.vehicle-container .vehicle-form input:hover {
   border-color: #ff4757;
   box-shadow: 0 4px 12px rgba(255, 71, 87, 0.1);
 }
 
-.vehicle-form input:focus {
+.vehicle-container .vehicle-form input:focus {
   outline: none;
   border-color: #ff4757;
   box-shadow: 0 4px 16px rgba(255, 71, 87, 0.15);
 }
 
-.vehicle-form input.error {
+.vehicle-container .vehicle-form input.error {
   border-color: #dc3545;
-  background: #fff5f5;
+  background: #f8d7da;
 }
 
-.error-text {
-  color: #dc3545;
-  font-size: 11px;
-  font-weight: 500;
+.vehicle-container .error-text {
+  color: #721c24;
+  font-size: 13px;
+  font-weight: 600;
   display: block;
-  margin-top: -8px;
-  margin-bottom: 6px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
 }
 
-/* === Primary Button === */
-.btn-primary {
+/* === COMPACT PRIMARY BUTTON === */
+.vehicle-container .btn-primary {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
   background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
   color: white;
-  border: none;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+  min-width: 130px;
+}
+
+.vehicle-container .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+.vehicle-container .btn-cancel {
   padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
+  border: none;
+  border-radius: 8px;
   font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
   white-space: nowrap;
-  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-  min-width: 100px;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-/* === Cancel Button === */
-.btn-cancel {
   background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
   color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
-  min-width: 80px;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
+  min-width: 110px;
 }
 
-.btn-cancel:hover {
+.vehicle-container .btn-cancel:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+  box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
 }
 
-/* === Alert === */
-.alert {
+/* === ALERTS === */
+.vehicle-container .alert {
   margin-top: 14px;
   padding: 12px 16px;
   border-radius: 12px;
@@ -175,20 +178,20 @@
   }
 }
 
-.alert.success {
+.vehicle-container .alert.success {
   background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
   color: #155724;
   border: 1px solid #b1dfbb;
 }
 
-.alert.error {
+.vehicle-container .alert.error {
   background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
   color: #721c24;
   border: 1px solid #f1b0b7;
 }
 
 /* === Table Wrapper === */
-.table-wrapper {
+.vehicle-container .table-wrapper {
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -196,7 +199,7 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.table-wrapper h3 {
+.vehicle-container .table-wrapper h3 {
   padding: 16px 20px;
   margin: 0;
   background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
@@ -205,26 +208,27 @@
   font-size: 1.1rem;
 }
 
-/* === Table Container === */
-.table-container {
+/* === Table === */
+.vehicle-container .table-container {
   overflow-x: auto;
 }
 
-.vehicle-table {
+.vehicle-container .vehicle-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  min-width: 600px;
 }
 
-.vehicle-table th,
-.vehicle-table td {
-  padding: 12px 10px;
+.vehicle-container .vehicle-table th,
+.vehicle-container .vehicle-table td {
+  padding: 14px 12px;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
   font-size: 13px;
 }
 
-.vehicle-table th {
+.vehicle-container .vehicle-table th {
   background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
   font-weight: 700;
   color: #222;
@@ -234,192 +238,137 @@
   border-bottom: 2px solid rgba(255, 71, 87, 0.1);
 }
 
-.vehicle-table tbody tr {
-  transition: all 0.2s ease;
-}
-
-.vehicle-table tbody tr:hover {
+.vehicle-container .vehicle-table tbody tr:hover {
   background-color: rgba(255, 107, 53, 0.03);
   box-shadow: inset 0 0 12px rgba(255, 71, 87, 0.05);
 }
 
-.vehicle-table code {
-  background: #f5f5f5;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  color: #333;
+/* === Compact Actions Column === */
+.vehicle-container .vehicle-table th:nth-child(5),
+.vehicle-container .vehicle-table td:nth-child(5) {
+  width: 150px;
+  max-width: 280px;
+  padding: 12px 10px;
 }
 
-/* === Status Badge === */
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 11px;
-  font-weight: 600;
+/* === STATUS BADGES === */
+.vehicle-container .status-badge {
   display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.vehicle-container .status-badge.available {
+  background: #d4edda;
+  color: #155724;
+}
+
+.vehicle-container .status-badge.unavailable {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* === ACTION BUTTONS — FIXED & COMPACT === */
+.vehicle-container .action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: -2px;
+}
+
+.vehicle-container .action-buttons .btn-edit,
+.vehicle-container .action-buttons .btn-delete,
+.vehicle-container .action-buttons .btn-unavailable {
+  width: 120px;
+  min-width: unset;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 10px;
+  font-size: 11px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
-.status-badge.available {
-  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-  color: #155724;
-  border: 1px solid #b1dfbb;
+/* Colors */
+.vehicle-container .btn-edit {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
 }
 
-.status-badge.unavailable {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  color: #856404;
-  border: 1px solid #ffd700;
+.vehicle-container .btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
-/* === Empty & Loading States === */
-.empty,
-.loading {
+.vehicle-container .btn-delete {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+
+.vehicle-container .btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.vehicle-container .btn-unavailable {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+}
+
+.vehicle-container .btn-unavailable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Single "Make Available" button */
+.vehicle-container .btn-available {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1;
+  min-width: 100px;
+  text-align: center;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+}
+
+.vehicle-container .btn-available:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* === Empty & Loading === */
+.vehicle-container .empty,
+.vehicle-container .loading {
   text-align: center;
   padding: 50px 20px;
   color: #999;
   font-size: 14px;
 }
 
-/* === Action Buttons === */
-.action-buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-/* === SMALL ACTION BUTTONS - MATCHING LOGISTICS === */
-.btn-edit,
-.btn-delete,
-.btn-available,
-.btn-unavailable {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-  line-height: 1;
-  text-align: center;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  min-width: 65px;
-}
-
-.btn-edit:hover,
-.btn-delete:hover,
-.btn-available:hover,
-.btn-unavailable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* EDIT - Blue */
-.btn-edit {
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
-  color: white;
-}
-
-.btn-edit:hover {
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-}
-
-/* DELETE - Red */
-.btn-delete {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: white;
-}
-
-.btn-delete:hover {
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-/* MAKE AVAILABLE - Green */
-.btn-available {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-}
-
-.btn-available:hover {
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-/* SET UNAVAILABLE - Orange */
-.btn-unavailable {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: white;
-}
-
-.btn-unavailable:hover {
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-}
-
-/* === Dropdown === */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: white;
-  min-width: 160px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  border-radius: 8px;
-  overflow: hidden;
-  left: 0;
-  top: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.dropdown-content button {
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  border: none;
-  background: white;
-  cursor: pointer;
-  font-size: 12px;
-  color: #333;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.dropdown-content button:hover {
-  background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 71, 87, 0.08) 100%);
-  color: #ff4757;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* === Responsive Design === */
+/* === Responsive === */
 @media (max-width: 992px) {
   .vehicle-container {
     padding: 30px 20px;
-  }
-
-  .vehicle-container h2 {
-    font-size: 1.8rem;
-  }
-
-  .form-wrapper {
-    padding: 18px;
-  }
-
-  .vehicle-form {
-    gap: 10px;
   }
 }
 
@@ -434,55 +383,48 @@
     margin-bottom: 20px;
   }
 
-  .form-wrapper {
+  .vehicle-container .form-wrapper {
     padding: 14px;
   }
 
-  .form-wrapper h3 {
-    font-size: 1.1rem;
-    margin-bottom: 14px;
-  }
-
-  .vehicle-form {
+  .vehicle-container .vehicle-form {
     flex-direction: column;
     gap: 10px;
   }
 
-  .vehicle-form input {
+  .vehicle-container .vehicle-form input {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .vehicle-container .btn-primary,
+  .vehicle-container .btn-cancel {
     width: 100%;
+    padding: 10px 20px;
+    font-size: 13px;
     min-width: unset;
-    font-size: 12px;
-    padding: 8px 10px;
   }
 
-  .btn-primary,
-  .btn-cancel {
+  .vehicle-container .action-buttons .btn-edit,
+  .vehicle-container .action-buttons .btn-delete,
+  .vehicle-container .action-buttons .btn-unavailable,
+  .vehicle-container .btn-available {
     width: 100%;
-    padding: 8px 14px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 
-  .table-wrapper h3 {
-    padding: 16px 18px;
-    font-size: 1rem;
-  }
-
-  .vehicle-table th,
-  .vehicle-table td {
+  .vehicle-container .vehicle-table th,
+  .vehicle-container .vehicle-table td {
     padding: 10px 8px;
     font-size: 12px;
   }
 
-  .action-buttons {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .btn-edit,
-  .btn-delete,
-  .btn-available,
-  .btn-unavailable {
-    width: 100%;
-    padding: 8px 12px;
+  .vehicle-container .vehicle-table th:nth-child(5),
+  .vehicle-container .vehicle-table td:nth-child(5) {
+    width: auto;
+    max-width: none;
+    padding: 10px 8px;
   }
 }
 
@@ -496,47 +438,33 @@
     font-size: 1.4rem;
   }
 
-  .form-wrapper {
-    padding: 12px;
-  }
-
-  .form-wrapper h3 {
-    font-size: 1rem;
-  }
-
-  .vehicle-form input {
-    font-size: 11px;
+  .vehicle-container .vehicle-form input {
+    font-size: 12px;
     padding: 8px 10px;
   }
 
-  .btn-primary,
-  .btn-cancel {
-    font-size: 10px;
-    padding: 8px 12px;
+  .vehicle-container .btn-primary,
+  .vehicle-container .btn-cancel {
+    font-size: 12px;
+    padding: 8px 16px;
   }
 
-  .table-wrapper h3 {
-    padding: 14px 16px;
-    font-size: 1rem;
+  .vehicle-container .action-buttons .btn-edit,
+  .vehicle-container .action-buttons .btn-delete,
+  .vehicle-container .action-buttons .btn-unavailable,
+  .vehicle-container .btn-available {
+    font-size: 11px;
+    padding: 6px 12px;
   }
 
-  .vehicle-table th,
-  .vehicle-table td {
+  .vehicle-container .vehicle-table th,
+  .vehicle-container .vehicle-table td {
     padding: 8px 6px;
     font-size: 11px;
   }
 
-  .btn-edit,
-  .btn-delete,
-  .btn-available,
-  .btn-unavailable {
-    font-size: 10px;
-    padding: 6px 10px;
-    min-width: 60px;
-  }
-
-  .status-badge {
-    font-size: 10px;
-    padding: 4px 10px;
+  .vehicle-container .status-badge {
+    font-size: 0.75rem;
+    padding: 3px 6px;
   }
 }

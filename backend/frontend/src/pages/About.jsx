@@ -1,5 +1,5 @@
+// src/pages/About.jsx
 import React from "react";
-import logo from "../assets/logo.png";
 import './css/About.css';
 
 const About = () => {
@@ -21,7 +21,7 @@ const About = () => {
             <div className="story-text">
               <h3>Our Story</h3>
               <p>
-                At <strong>Salvacion Garay Bottled Drink Distributor</strong>, 
+                At <strong>Salvacion Garay Bottled Drink Distributors</strong>, 
                 we believe that every sip should be refreshing, high-quality, 
                 and made with care. We have been committed to providing a 
                 diverse range of beverages, including bottled, canned, and 
@@ -29,7 +29,8 @@ const About = () => {
               </p>
             </div>
             <div className="story-image">
-              <img src={logo} alt="BottleFlow Logo" />
+              {/* ✅ Use public path directly — no import needed */}
+              <img src="/assets/logo.png" alt="BottleFlow Logo" />
             </div>
           </div>
 

@@ -15,7 +15,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     { to: "/admin/logistics", label: "Logistics" },
     { to: "/admin/reviews", label: "Reviews" },
     { to: "/admin/analytics", label: "Analytics" },
-    { to: "/admin/download-reports", label: "Download Reports" },
+    { to: "/admin/download-reports", label: " Reports" },
   ];
 
   return (

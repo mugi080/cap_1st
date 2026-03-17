@@ -1,93 +1,33 @@
-/* src/components/admin/css/CustomUserTable.css */
+/* src/pages/admin/css/CustomUserTable.css */
 
 .user-container {
-  padding: 40px 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
   min-height: 100vh;
-  font-size: 14px;
 }
 
-/* === Alert / Notification === */
-.alert {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 14px 20px;
-  border-radius: 12px;
-  font-weight: 600;
-  z-index: 1000;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  max-width: 400px;
-  font-size: 14px;
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.alert.success {
-  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-  color: #155724;
-  border: 1px solid #b1dfbb;
-}
-
-.alert.error {
-  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-  color: #721c24;
-  border: 1px solid #f1b0b7;
-}
-
-/* === Header === */
 .user-container h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #222 0%, #ff4757 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 30px;
-  animation: fadeIn 0.8s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.user-container h3 {
-  margin-top: 0;
   margin-bottom: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 24px;
   background: linear-gradient(135deg, #222 0%, #ff4757 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-size: 1.6rem;
-  font-weight: 700;
 }
 
-/* === Controls Section === */
 .controls {
   display: flex;
-  gap: 14px;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
+  align-items: center;
   background: white;
-  padding: 20px;
+  padding: 16px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255, 71, 87, 0.1);
@@ -98,12 +38,9 @@
   padding: 10px 14px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
-  background: white;
-  font-size: 13px;
+  font-size: 15px;
   min-width: 180px;
-  font-weight: 500;
   transition: all 0.3s ease;
-  color: #333;
 }
 
 .input-field:hover,
@@ -119,49 +56,47 @@
   box-shadow: 0 4px 16px rgba(255, 71, 87, 0.15);
 }
 
-/* === Primary Buttons === */
-.controls button {
-  padding: 10px 20px;
-  border: none;
+.btn-secondary {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 13px;
+  color: #333;
   font-weight: 600;
   cursor: pointer;
-  white-space: nowrap;
   transition: all 0.3s ease;
+  white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+  font-size: 13px;
 }
 
-.controls button:hover {
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* === Table === */
 .table-wrapper {
-  background: white;
+  overflow-x: auto;
+  border: 1px solid #eee;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: white;
 }
 
 .user-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  background: white;
 }
 
 .user-table th,
 .user-table td {
-  padding: 14px 12px;
+  padding: 14px 16px;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .user-table th {
@@ -170,51 +105,175 @@
   color: #222;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   border-bottom: 2px solid rgba(255, 71, 87, 0.1);
 }
 
-.user-table tbody tr {
-  transition: all 0.2s ease;
+.user-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .user-table tbody tr:hover {
   background-color: rgba(255, 107, 53, 0.03);
-  box-shadow: inset 0 0 12px rgba(255, 71, 87, 0.05);
 }
 
-.user-table td.empty {
+.empty {
   text-align: center;
-  color: #999;
-  padding: 60px 24px;
+  color: #777;
+  padding: 32px;
   font-size: 16px;
 }
 
-/* === Table Action Buttons === */
-.user-table button {
+/* Role Badges */
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-user { background: #e0f7fa; color: #006064; }
+.role-staff { background: #fff8e1; color: #ff8f00; }
+.role-admin { background: #f1f8e9; color: #33691e; }
+
+/* Alert Toast */
+.alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.alert.success { background: linear-gradient(135deg, #4caf50 0%, #45a049); }
+.alert.error { background: linear-gradient(135deg, #f44336 0%, #d32f2f); }
+
+@media (max-width: 768px) {
+  .user-container {
+    padding: 16px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+  }
+
+  .input-field,
+  .select-field,
+  .btn-secondary {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+}
+
+/* ... existing styles above ... */
+
+/* Smaller Role Requests Button */
+.btn-role-requests {
   padding: 6px 12px;
-  border: none;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 11px;
+  color: #333;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
   white-space: nowrap;
-  line-height: 1;
-  min-width: 65px;
-  text-align: center;
-  transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  font-size: 12px;
+  min-height: auto;
+  line-height: 1.2;
+}
+
+.btn-role-requests:hover {
+  background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure consistent control spacing even with smaller button */
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 71, 87, 0.1);
+}
+
+/* ... rest of your existing CSS remains unchanged ... *//* ... existing styles above ... */
+
+/* Smaller Role Requests Button */
+/* Smaller Role Requests Button - Green */
+.btn-role-requests {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 1px solid #81c784;
+  border-radius: 6px;
+  color: #2e7d32;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-size: 12px;
+  min-height: auto;
+  line-height: 1.2;
+}
+
+.btn-role-requests:hover {
+  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
+}
+/* Create User Button */
+.btn-create-user {
+  background-color: #2196F3;
   color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 12px;
 }
 
-.user-table button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+.btn-create-user:hover {
+  background-color: #1976D2;
 }
 
-/* === Modal === */
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -225,202 +284,75 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.3s ease-out;
+  z-index: 1000;
 }
 
 .modal-content {
   background: white;
+  padding: 24px;
+  border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 16px;
-  padding: 28px;
-  position: relative;
-  font-size: 14px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.modal-content h3 {
+  margin-top: 0;
+  color: #000;
+  text-align: center;
 }
 
-.modal-content label {
-  display: block;
+.form-group {
   margin-bottom: 16px;
-  font-size: 13px;
-  color: #222;
-  font-weight: 600;
 }
 
-.modal-content .input-field,
-.modal-content .select-field {
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
   width: 100%;
-  margin-top: 8px;
-  min-width: unset;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
 }
 
 .modal-actions {
-  margin-top: 24px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
+  margin-top: 20px;
 }
 
-.modal-actions button {
-  padding: 10px 20px;
+.modal-actions .btn-cancel,
+.modal-actions .btn-submit {
+  padding: 8px 16px;
   border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  font-weight: bold;
 }
 
-.modal-actions button:first-child {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+.modal-actions .btn-cancel {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.modal-actions .btn-submit {
+  background: #4CAF50;
   color: white;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
-.modal-actions button:first-child:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+.modal-actions .btn-cancel:hover {
+  background: #e0e0e0;
 }
 
-.modal-actions button:last-child {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
-}
-
-.modal-actions button:last-child:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
-}
-
-/* === Responsive Design === */
-@media (max-width: 992px) {
-  .user-container {
-    padding: 30px 20px;
-  }
-
-  .user-container h2 {
-    font-size: 1.8rem;
-  }
-
-  .controls {
-    gap: 12px;
-    padding: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .user-container {
-    padding: 20px 16px;
-    font-size: 13px;
-  }
-
-  .user-container h2 {
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-  }
-
-  .controls {
-    flex-direction: column;
-    gap: 10px;
-    padding: 14px;
-  }
-
-  .input-field,
-  .select-field {
-    width: 100%;
-    min-width: unset;
-  }
-
-  .controls button {
-    width: 100%;
-  }
-
-  .user-table th,
-  .user-table td {
-    padding: 10px 8px;
-    font-size: 12px;
-  }
-
-  .modal-content {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .user-container h3 {
-    font-size: 1.4rem;
-    margin-bottom: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .user-container {
-    padding: 15px 12px;
-    font-size: 12px;
-  }
-
-  .user-container h2 {
-    font-size: 1.4rem;
-  }
-
-  .controls {
-    padding: 12px;
-    gap: 8px;
-  }
-
-  .input-field,
-  .select-field {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
-
-  .controls button {
-    font-size: 11px;
-    padding: 8px 14px;
-  }
-
-  .user-table th,
-  .user-table td {
-    padding: 8px 6px;
-    font-size: 11px;
-  }
-
-  .user-table button {
-    font-size: 10px;
-    padding: 6px 10px;
-    min-width: 60px;
-  }
-
-  .modal-content {
-    padding: 16px;
-    width: 95%;
-  }
-
-  .user-container h3 {
-    font-size: 1.2rem;
-  }
-
-  .modal-actions button {
-    font-size: 11px;
-    padding: 8px 14px;
-  }
+.modal-actions .btn-submit:hover {
+  background: #45a049;
 }

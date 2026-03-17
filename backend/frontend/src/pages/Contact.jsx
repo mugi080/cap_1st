@@ -1,3 +1,4 @@
+// src/pages/Contact.jsx
 import React, { useState } from 'react';
 import './css/Contact.css';
 
@@ -17,16 +18,14 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
     console.log('Form submitted:', formData);
-    // Reset form
     setFormData({ name: '', email: '', description: '' });
   };
 
   return (
     <div className="contact-section">
-      <div className="contact-container">
-        {/* Header */}
+      {/* ✅ ONLY ONE CONTAINER — matches About exactly */}
+      <div className="section-container">
         <div className="contact-header">
           <span className="section-label">Get In Touch</span>
           <h2 className="section-title">Contact Us</h2>
@@ -35,9 +34,7 @@ const Contact = () => {
           </p>
         </div>
 
-        {/* Main Content */}
         <div className="contact-content">
-          {/* Form Section */}
           <div className="contact-form-wrapper">
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -46,7 +43,6 @@ const Contact = () => {
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="John Doe"
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -59,7 +55,6 @@ const Contact = () => {
                   type="email"
                   id="email"
                   name="email"
-                  placeholder="john@example.com"
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -86,26 +81,22 @@ const Contact = () => {
             </form>
           </div>
 
-          {/* Contact Information Section */}
           <div className="contact-info-wrapper">
             <div className="contact-info-card">
-              <div className="info-icon">📱</div>
               <h3>Phone</h3>
-              <p>09XXXXXXXXX</p>
+              <p>09255120738</p>
               <span className="info-label">Available 24/7</span>
             </div>
 
             <div className="contact-info-card">
-              <div className="info-icon">👤</div>
               <h3>Contact Person</h3>
-              <p>Gary Salvacion</p>
+              <p>Garay Salvacion</p>
               <span className="info-label">Business Owner</span>
             </div>
 
             <div className="contact-info-card">
-              <div className="info-icon">✉️</div>
               <h3>Email</h3>
-              <p>GarySalvacion@gmail.com</p>
+              <p>GaraySalvacion@gmail.com</p>
               <span className="info-label">Response within 24hrs</span>
             </div>
           </div>

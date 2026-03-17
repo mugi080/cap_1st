@@ -1,7 +1,6 @@
 // src/components/navbar/NavBar.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.png";
 import "./NavBar.css";
 
 const NavBar = () => {
@@ -50,7 +49,7 @@ const NavBar = () => {
   };
 
   return (
-    <>
+    <div className="bottleflow-navbar-wrapper">
       <nav className="navbar">
         {/* Hamburger - Mobile Only */}
         <div
@@ -64,7 +63,13 @@ const NavBar = () => {
 
         {/* Logo */}
         <div className="logo" onClick={() => handleNavClick("/")}>
-          <img src={logo} alt="BottleFlow Logo" />
+          <img 
+            src="/assets/logo.png" 
+            alt="BottleFlow Logo" 
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
         </div>
 
         {/* Desktop Menu */}
@@ -103,29 +108,29 @@ const NavBar = () => {
           <div className="auth-buttons">
             {isLoggedIn ? (
               <>
-                <span
-                  className="user-icon"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                >
-                  👤
+                <span className="user-icon" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M4 20V19C4 16.7909 5.79086 15 8 15H16C18.2091 15 20 16.7909 20 19V20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
                 </span>
                 {dropdownOpen && (
                   <div className="dropdown-menu desktop-dropdown">
                     <button onClick={() => handleNavClick("/profile")}>
-                      <span className="dropdown-icon">👤</span>
+                      <span className="dropdown-icon"></span>
                       Profile
                     </button>
-                    <button onClick={() => handleNavClick("/settings")}>
-                      <span className="dropdown-icon">⚙️</span>
+                    <button onClick={() => handleNavClick("/user-settings")}>
+                      <span className="dropdown-icon"></span>
                       Settings
                     </button>
                     <button onClick={() => handleNavClick("/orders")}>
-                      <span className="dropdown-icon">📦</span>
+                      <span className="dropdown-icon"></span>
                       My Orders
                     </button>
                     <hr />
                     <button onClick={handleLogout} className="logout-btn">
-                      <span className="dropdown-icon">🚪</span>
+                      <span className="dropdown-icon"></span>
                       Logout
                     </button>
                   </div>
@@ -162,20 +167,20 @@ const NavBar = () => {
                 {dropdownOpen && (
                   <div className="dropdown-menu mobile-dropdown">
                     <button onClick={() => handleNavClick("/profile")}>
-                      <span className="dropdown-icon">👤</span>
+                      <span className="dropdown-icon"></span>
                       Profile
                     </button>
-                    <button onClick={() => handleNavClick("/settings")}>
-                      <span className="dropdown-icon">⚙️</span>
+                    <button onClick={() => handleNavClick("/user-settings")}>
+                      <span className="dropdown-icon"></span>
                       Settings
                     </button>
                     <button onClick={() => handleNavClick("/orders")}>
-                      <span className="dropdown-icon">📦</span>
+                      <span className="dropdown-icon"></span>
                       My Orders
                     </button>
                     <hr />
                     <button onClick={handleLogout} className="logout-btn">
-                      <span className="dropdown-icon">🚪</span>
+                      <span className="dropdown-icon"></span>
                       Logout
                     </button>
                   </div>
@@ -227,7 +232,7 @@ const NavBar = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

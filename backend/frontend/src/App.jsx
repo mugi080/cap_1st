@@ -10,10 +10,7 @@ import {
 
 // User Pages
 import LandingPage from "./pages/LandingPage";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Reviews from "./pages/Reviews";
-import Contact from "./pages/Contact";
+
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetails";
 import OrderingPage from "./pages/ordering/OrderingPage";
@@ -27,6 +24,9 @@ import UserProfile from "./components/user/UserProfile";
 import Navbar from "./components/navbar/NavBar";
 import CheckoutForm from "./pages/ordering/CheckoutForm";
 import OrderHistory from "./pages/ordering/OrderHistory";
+import OrderReceipt from "./pages/ordering/OrderReceipt";
+import UserSettings from "./components/user/UserSettings";
+
 // Role Request
 import RoleRequestForm from "./components/user/RoleRequestForm";
 import AdminRoleRequests from "./components/user/AdminRoleRequests";
@@ -57,14 +57,18 @@ import OrderReview from "./admin/adminPages/OrderReview";
 
 import TryAnalytics from "./admin/adminPages/TryAnalytics";
 import Drivers from "./admin/adminPages/Drivers";
+
+import DownloadReports from "./admin/adminPages/downloadReports";
 // Staff Pages
 import StaffLogin from "./staff/StaffLogin";
 import StaffDashboard from "./staff/staffPages/StaffDashboard";
 import MyDelivery from "./staff/staffPages/MyDelivery";
 import NewTask from "./staff/staffPages/NewTask";
 import StaffProfile from "./staff/staffPages/StaffProfile";
-import DownloadReports from "./admin/adminPages/downloadReports";
+
 import StaffOrderDetails from "./staff/staffPages/OrderDetails";
+import StaffOrderHistory from "./staff/staffPages/OrderHistory";
+import Preferred from "./staff/staffPages/Preffered";
 
 // Styles
 import "./App.css";
@@ -126,6 +130,7 @@ function AppRoutes() {
                     <Route path="/admin/download-reports" element={<DownloadReports />} />
                     <Route path="/admin/analytics" element={<TryAnalytics />} />
                     <Route path="/admin/drivers" element={<Drivers />} />
+                    
             </Routes>
               </div>
             </div>
@@ -143,6 +148,9 @@ function AppRoutes() {
                 
                 <Route path="/staff/profile" element={<StaffProfile />} />
                 <Route path="/staff/order-details/:id" element={<StaffOrderDetails />} />
+                <Route path="/staff/history" element={<StaffOrderHistory />} />
+                <Route path="/staff/preferences" element={<Preferred />} />
+
                 {/* Add other staff-specific routes here */}
               </Routes>
             </div>
@@ -167,8 +175,10 @@ function AppRoutes() {
               <Route path="/password/reset/confirm/:uid/:token/" element={<ResetPasswordConfirm />} />
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/request-role" element={<RoleRequestForm />} />
-
+                <Route path="/user-settings" element={<UserSettings />} />
+                <Route path="/receipt/" element={<OrderReceipt />} />
                 <Route path="/order-history" element={<OrderHistory />} />
+                
             </Routes>
           </div>
         </>

@@ -6,9 +6,9 @@
   align-items: center;
   padding: 0 2rem;
   height: 60px;
-  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+  background: linear-gradient(135deg, #222222, #1c1c1c);
   color: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   position: sticky;
   top: 0;
   z-index: 1001;
@@ -41,12 +41,12 @@
 
 .welcome-message {
   font-size: 1rem;
-  color: #e0e0ff;
+  color: #b0b0b0;
 }
 
 .admin-name {
   font-weight: 600;
-  color: white;
+  color: #f0f0f0;
   margin-left: 6px;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .profile-btn {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
 }
 

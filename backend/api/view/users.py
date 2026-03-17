@@ -1,55 +1,79 @@
-from rest_framework.decorators import api_view, permission_classes
+# views.py
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import CustomUser
-
+from ..models import CustomUser, Vehicle, LUCENA_BARANGAYS
+from ..serializers import CustomUserReadSerializer
 import logging
+import json
+
 logger = logging.getLogger(__name__)
 
-@api_view(['PUT'])
+@api_view(['PATCH', 'PUT'])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
 def update_user_profile(request):
-    """
-    Update the logged-in user's profile (e.g., name, address, contact number)
-    """
     try:
-        # Get the authenticated user
         user = request.user
 
-        # Get the new fields from the request data
-        new_name = request.data.get("name")
-        new_address = request.data.get("address")
-        new_contact_number = request.data.get("contact_number")
+        # --- Update basic profile fields (for all users) ---
+        if 'first_name' in request.data:
+            user.first_name = request.data['first_name']
+        if 'middle_name' in request.data:
+            user.middle_name = request.data['middle_name']
+        if 'last_name' in request.data:
+            user.last_name = request.data['last_name']
+        if 'address' in request.data:
+            user.address = request.data['address']
+        if 'contact_number' in request.data:
+            user.contact_number = request.data['contact_number']
 
-        # Validate the new name if provided
-        if new_name is not None:
-            user.first_name = new_name
+        # --- Update profile picture (for all users) ---
+        if 'profile_picture' in request.FILES:
+            user.profile_picture = request.FILES['profile_picture']
 
-        # Validate the new address if provided
-        if new_address is not None:
-            user.address = new_address
+        # --- Handle staff-specific preferences (ONLY if user is staff) ---
+        if user.role == 'staff':
+            # Update preferred vehicle
+            if 'preferred_vehicle' in request.data:
+                vehicle_id = request.data['preferred_vehicle']
+                if not vehicle_id or vehicle_id in ["", "null", "undefined"]:
+                    user.preferred_vehicle = None
+                else:
+                    try:
+                        vehicle = Vehicle.objects.get(id=vehicle_id, is_available=True)
+                        user.preferred_vehicle = vehicle
+                    except Vehicle.DoesNotExist:
+                        # Silently ignore invalid vehicle (or log if needed)
+                        pass
 
-        # Validate the new contact number if provided
-        if new_contact_number is not None:
-            user.contact_number = new_contact_number
+            # Update familiar barangays
+            if 'familiar_barangays' in request.data:
+                try:
+                    # Parse JSON string sent from frontend
+                    barangays = json.loads(request.data['familiar_barangays'])
+                    if isinstance(barangays, list):
+                        valid_names = [name for _, name in LUCENA_BARANGAYS]
+                        user.familiar_barangays = [b for b in barangays if b in valid_names]
+                except (ValueError, TypeError):
+                    # If parsing fails, keep current value
+                    pass
 
-        # Save the updated user object
+        # Save all changes
         user.save()
 
+        # Return updated profile
+        serializer = CustomUserReadSerializer(user, context={'request': request})
         return Response({
             "message": "Profile updated successfully.",
-            "user": {
-                "id": user.id,
-                "first_name": user.first_name,
-                "email": user.email,
-                "address": user.address,
-                "contact_number": user.contact_number
-            }
+            "user": serializer.data
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
-        logger.error(f"Error updating user profile: {str(e)}")
-        return Response({"error": "Failed to update profile."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+        logger.error(f"Error updating profile: {str(e)}")
+        return Response(
+            {"error": "Failed to update profile."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

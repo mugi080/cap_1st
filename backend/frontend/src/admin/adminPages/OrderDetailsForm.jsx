@@ -1,15 +1,26 @@
-// src/components/admin/order/OrderDetailsForm.js
-import React, { useState } from "react";
+// src/components/admin/order/OrderDetailsForm.jsx
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios"; // Optional: custom styling
-import LocationPicker from "../../pages/ordering/LocationPicker"; // Adjust path as needed
+import axios from "axios";
+import "./css/OrderDetailsForm.css"; // Will use same base styles as CheckoutForm
+import LocationPicker from "../../pages/ordering/LocationPicker";
+
+const BARANGAYS = [
+  "Dalahican",
+  "Cotta",
+  "Dupay",
+  "Iyam",
+  "Market View",
+  "Mayao",
+  "Talao-talao"
+];
 
 const OrderDetailsForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { selectedItems } = location.state || {};
-  const adminData = JSON.parse(localStorage.getItem("admin_data"));
+  const adminData = JSON.parse(localStorage.getItem("admin_data") || "{}");
   const adminToken = localStorage.getItem("admin_token");
 
   const [formData, setFormData] = useState({
@@ -19,38 +30,72 @@ const OrderDetailsForm = () => {
     paymentMethod: "",
     orderStatus: "Pending",
     adminComments: "",
-    address: "", // Will hold lat,lng or delivery address
+    address: "",
+    barangay: "",
   });
 
   const [popupMessage, setPopupMessage] = useState("");
   const [popupType, setPopupType] = useState("");
 
-  // Store coordinates for pickup default
-  const storeLocation = { lat: 14.5995, lng: 120.9842 };
+  const storeLocation = { lat: 13.9543, lng: 121.6215 };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLocationSelect = ({ lat, lng }) => {
-    const coordinates = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    setFormData((prev) => ({
-      ...prev,
-      address: coordinates,
-    }));
+  const handleLocationSelect = ({ lat, lng, address }) => {
+    setFormData((prev) => ({ ...prev, address: address }));
+  };
+
+  const showPopup = (message, type) => {
+    setPopupMessage(message);
+    setPopupType(type);
+    setTimeout(() => setPopupMessage(""), 5000);
+  };
+
+  // Calculate total cases
+  const calculateTotalCases = () => {
+    return selectedItems?.reduce((sum, item) => sum + (parseFloat(item.caseQuantity) || 0), 0) || 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.customerName || !formData.contactNumber || !formData.paymentMethod) {
-      showPopup("Please fill in all required fields.", "error");
+      showPopup("Please complete all required fields.", "error");
       return;
     }
 
-    if (formData.deliveryType === "Delivered" && !formData.address.trim()) {
-      showPopup("Please select a delivery location on the map.", "error");
+    if (formData.deliveryType === "Delivered") {
+      if (!formData.address) {
+        showPopup("Please select a delivery location on the map.", "error");
+        return;
+      }
+      if (!formData.barangay) {
+        showPopup("Please select the barangay.", "error");
+        return;
+      }
+
+      const totalCases = calculateTotalCases();
+      if (totalCases < 10) {
+        const confirmed = window.confirm(
+          `Delivery order has only ${totalCases} case(s). Minimum is 10 cases.\n\nGo back to add more?`
+        );
+        if (confirmed) {
+          navigate(-1);
+        }
+        return;
+      }
+    }
+
+    const outOfStock = selectedItems.some((item) => {
+      const maxCases = item.stock / item.units_per_case;
+      return item.caseQuantity > maxCases;
+    });
+
+    if (outOfStock) {
+      showPopup("❌ Some items exceed available stock. Please adjust quantities.", "error");
       return;
     }
 
@@ -65,9 +110,10 @@ const OrderDetailsForm = () => {
       delivery_type: formData.deliveryType,
       customer_name: formData.customerName,
       contact_number: formData.contactNumber,
+      ...(formData.deliveryType === "Delivered" && { barangay: formData.barangay }),
       items: selectedItems.map((item) => ({
         beverage: item.id,
-        quantity: item.quantity,
+        quantity: item.caseQuantity,
       })),
       user: adminData?.id,
     };
@@ -97,148 +143,118 @@ const OrderDetailsForm = () => {
     }
   };
 
-  const showPopup = (message, type) => {
-    setPopupMessage(message);
-    setPopupType(type);
-    setTimeout(() => setPopupMessage(""), 5000);
-  };
-
   if (!selectedItems || selectedItems.length === 0) {
     return (
-      <div className="no-items">
-        No items selected. Please go back and select some items.
+      <div className="checkout-container">
+        <p className="no-items-message">
+          No items selected. Please go back and select some items.
+        </p>
       </div>
     );
   }
 
+  const totalPrice = selectedItems.reduce((sum, item) => sum + item.price * item.caseQuantity, 0);
+
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
-      {/* Popup Notification */}
+    <div className="checkout-container">
       {popupMessage && (
-        <div
-          style={{
-            position: "fixed",
-            top: "20px",
-            right: "20px",
-            backgroundColor: popupType === "error" ? "#ff4d4d" : "#4CAF50",
-            color: "white",
-            padding: "12px 20px",
-            borderRadius: "5px",
-            boxShadow: "0 3px 6px rgba(0,0,0,0.2)",
-            zIndex: 1000,
-            minWidth: "200px",
-            textAlign: "center",
-          }}
-        >
-          <span>{popupMessage}</span>
-          <button
-            onClick={() => setPopupMessage("")}
-            style={{
-              marginLeft: "10px",
-              background: "transparent",
-              border: "none",
-              fontWeight: "bold",
-              cursor: "pointer",
-              color: "white",
-            }}
-          >
+        <div className={`popup ${popupType}`}>
+          {popupMessage}
+          <button className="popup-close" onClick={() => setPopupMessage("")}>
             ×
           </button>
         </div>
       )}
 
-      <h2>📝 Order Details</h2>
+      <h2>Admin Order Form</h2>
+      <p>Total Price: Php {totalPrice.toFixed(2)}</p>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-        {/* Customer Name */}
+      {/* Order Summary — reused pattern from CheckoutForm */}
+      <div className="order-summary">
+        <h4>Selected Items</h4>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Cases</th>
+                <th>Bottles</th>
+                <th>Price/Case</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedItems.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.caseQuantity}</td>
+                  <td>{Math.round(item.caseQuantity * item.units_per_case)}</td>
+                  <td>Php {item.price.toFixed(2)}</td>
+                  <td>Php {(item.price * item.caseQuantity).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label style={{ fontWeight: "bold" }}>Customer Name:</label>
+          <label>Customer Name:</label>
           <input
             type="text"
             name="customerName"
             value={formData.customerName}
             onChange={handleInputChange}
-            placeholder="Enter customer name"
+            placeholder="Enter full name"
             required
-            style={{
-              width: "100%",
-              padding: "8px",
-              fontSize: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
           />
         </div>
 
-        {/* Contact Number */}
         <div className="form-group">
-          <label style={{ fontWeight: "bold" }}>Contact Number:</label>
+          <label>Contact Number:</label>
           <input
             type="tel"
             name="contactNumber"
             value={formData.contactNumber}
             onChange={handleInputChange}
             placeholder="e.g. 09123456789"
-            pattern="[0-9]{11}"
-            title="Must be 11-digit phone number"
             required
-            style={{
-              width: "100%",
-              padding: "8px",
-              fontSize: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
           />
         </div>
 
-        {/* Delivery Type */}
         <div className="form-group">
-          <label style={{ fontWeight: "bold" }}>Delivery Type:</label>
-          <div style={{ display: "flex", gap: "20px", marginTop: "5px" }}>
-            <label>
-              <input
-                type="radio"
-                name="deliveryType"
-                value="Pickup"
-                checked={formData.deliveryType === "Pickup"}
-                onChange={(e) =>
-                  setFormData((p) => ({ ...p, deliveryType: "Pickup" }))
-                }
-              />{" "}
-              Pickup
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="deliveryType"
-                value="Delivered"
-                checked={formData.deliveryType === "Delivered"}
-                onChange={(e) =>
-                  setFormData((p) => ({ ...p, deliveryType: "Delivered" }))
-                }
-              />{" "}
-              Delivered
-            </label>
+          <label>Delivery Type:</label>
+          <div className="radio-group">
+            <input
+              type="radio"
+              id="pickup"
+              name="deliveryType"
+              value="Pickup"
+              checked={formData.deliveryType === "Pickup"}
+              onChange={handleInputChange}
+            />
+            <label htmlFor="pickup">Pickup</label>
+
+            <input
+              type="radio"
+              id="delivered"
+              name="deliveryType"
+              value="Delivered"
+              checked={formData.deliveryType === "Delivered"}
+              onChange={handleInputChange}
+            />
+            <label htmlFor="delivered">Delivery</label>
           </div>
         </div>
 
-        {/* Conditional Fields Based on Delivery Type */}
         {formData.deliveryType === "Pickup" && (
           <div className="form-group">
-            <label style={{ fontWeight: "bold" }}>Pickup Address:</label>
+            <label>Pickup Location:</label>
             <input
               type="text"
               value="St. Jude Street, Holy Spirit Subdivision, Lucena City"
               disabled
-              style={{
-                width: "100%",
-                padding: "8px",
-                backgroundColor: "#f9f9f9",
-                fontSize: "1rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-              }}
             />
           </div>
         )}
@@ -246,68 +262,65 @@ const OrderDetailsForm = () => {
         {formData.deliveryType === "Delivered" && (
           <>
             <div className="form-group">
-              <label style={{ fontWeight: "bold" }}>Select Delivery Location:</label>
+              <label>Select Location on Map:</label>
               <LocationPicker
                 onLocationSelect={handleLocationSelect}
-                pinLocation={storeLocation}
-                disabled={formData.deliveryType === "Pickup"}
+                deliveryType="Delivered"
+              />
+            </div>
+
+            <div className = "form-group">
+              <label>Address (auto-filled from map):</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                required
               />
             </div>
 
             <div className="form-group">
-              <label style={{ fontWeight: "bold" }}>Selected Coordinates:</label>
-              <input
-                type="text"
-                value={formData.address}
-                readOnly
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  fontSize: "1rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                }}
-              />
+              <label>
+                Barangay <span style={{ color: '#e74c3c' }}>*</span>
+              </label>
+              <select
+                name="barangay"
+                value={formData.barangay}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select your barangay</option>
+                {BARANGAYS.map((brgy) => (
+                  <option key={brgy} value={brgy}>
+                    {brgy}
+                  </option>
+                ))}
+              </select>
             </div>
           </>
         )}
 
-        {/* Payment Method */}
         <div className="form-group">
-          <label style={{ fontWeight: "bold" }}>Payment Method:</label>
+          <label>Payment Method:</label>
           <select
             name="paymentMethod"
             value={formData.paymentMethod}
             onChange={handleInputChange}
             required
-            style={{
-              width: "100%",
-              padding: "8px",
-              fontSize: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
           >
-            <option value="">-- Select --</option>
+            <option value="">Select payment method</option>
             <option value="Cash">Cash</option>
-            <option value="Cash on Delivery">Cash on delivery</option>
+            <option value="Cash on Delivery">Cash on Delivery</option>
           </select>
         </div>
 
-        {/* Order Status */}
         <div className="form-group">
-          <label style={{ fontWeight: "bold" }}>Order Status:</label>
+          <label>Order Status:</label>
           <select
             name="orderStatus"
             value={formData.orderStatus}
             onChange={handleInputChange}
-            style={{
-              width: "100%",
-              padding: "8px",
-              fontSize: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
           >
             <option value="Pending">Pending</option>
             <option value="Processing">Processing</option>
@@ -315,41 +328,17 @@ const OrderDetailsForm = () => {
           </select>
         </div>
 
-        {/* Admin Comments */}
         <div className="form-group">
-          <label style={{ fontWeight: "bold" }}>Admin Comments:</label>
+          <label>Admin Comments:</label>
           <textarea
             name="adminComments"
             value={formData.adminComments}
             onChange={handleInputChange}
-            placeholder="Add internal notes or comments..."
-            style={{
-              width: "100%",
-              padding: "8px",
-              height: "80px",
-              fontSize: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            placeholder="Add internal notes..."
           />
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="btn-submit"
-          style={{
-            padding: "12px",
-            background: "#4CAF50",
-            color: "white",
-            fontSize: "16px",
-            fontWeight: "bold",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            alignSelf: "flex-start",
-          }}
-        >
+        <button type="submit" className="btn-submit">
           Submit Order
         </button>
       </form>

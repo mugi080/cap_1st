@@ -1,6 +1,7 @@
+// src/components/admin/Category.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './products.css'; // ✅ shared styles
+import './products.css';
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -13,58 +14,49 @@ const Category = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return alert("Admin token missing");
-
       try {
         const user = await axios.get("http://localhost:8000/auth/users/me/", {
           headers: { Authorization: `Bearer ${token}` }
         });
-
         if (!user.data.is_staff && !user.data.is_superuser) {
           return alert("Not authorized");
         }
-
         setIsAdmin(true);
-
         const cats = await axios.get("http://localhost:8000/api/categories/", {
           headers: { Authorization: `Bearer ${token}` }
         });
-
         setCategories(cats.data);
       } catch (err) {
         console.error(err);
       }
     };
-
     fetchData();
   }, [token]);
 
   const addCategory = async (e) => {
     e.preventDefault();
-
+    if (!newCategory.trim()) return;
     try {
       const res = await axios.post("http://localhost:8000/api/categories/", 
-        { name: newCategory },
+        { name: newCategory.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setCategories([...categories, res.data]);
       setNewCategory('');
     } catch (err) {
-      console.error("Add category failed:", err);
+      alert("Failed to add category.");
     }
   };
 
   const deleteCategory = async (id) => {
     if (!window.confirm("Delete this category?")) return;
-
     try {
       await axios.delete(`http://localhost:8000/api/categories/${id}/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
-      setCategories(categories.filter((c) => c.id !== id));
+      setCategories(categories.filter(c => c.id !== id));
     } catch (err) {
-      console.error("Delete failed:", err);
+      alert("Failed to delete category.");
     }
   };
 
@@ -75,21 +67,19 @@ const Category = () => {
 
   const updateCategory = async (e) => {
     e.preventDefault();
-
+    if (!newCategory.trim()) return;
     try {
       const res = await axios.put(`http://localhost:8000/api/categories/${editCategory.id}/`,
-        { name: newCategory },
+        { name: newCategory.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setCategories(categories.map(cat => 
         cat.id === editCategory.id ? res.data : cat
       ));
-
       setEditCategory(null);
       setNewCategory('');
     } catch (err) {
-      console.error("Update category failed:", err);
+      alert("Failed to update category.");
     }
   };
 
@@ -97,21 +87,24 @@ const Category = () => {
 
   return (
     <div className="products-container">
-
       <h2>{editCategory ? "Edit Category" : "Add Category"}</h2>
 
-      <form onSubmit={editCategory ? updateCategory : addCategory}>
+      {/* ✅ Aligned form: button matches input height */}
+      <form 
+        onSubmit={editCategory ? updateCategory : addCategory} 
+        className="category-form"
+      >
         <input
           type="text"
           placeholder="Category name"
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
           required
+          className="category-input"
         />
-
         <button 
-          className={editCategory ? "btn-edit" : "btn-edit"} 
-          type="submit"
+          type="submit" 
+          className={editCategory ? "btn-edit" : "btn-primary"}
         >
           {editCategory ? "Update" : "Add"}
         </button>
@@ -123,31 +116,26 @@ const Category = () => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Actions</th>
+            <th className="actions-column-wide">Actions</th>
           </tr>
         </thead>
-
         <tbody>
           {categories.map((cat) => (
             <tr key={cat.id}>
               <td>{cat.name}</td>
-
-              <td>
-                <div className="action-buttons">
-                  <button className="btn-edit" onClick={() => editCategoryHandler(cat)}>
+              <td className="actions-column-wide">
+                <div className="action-buttons-wide">
+                  <button className="btn-edit btn-action-wide" onClick={() => editCategoryHandler(cat)}>
                     Edit
                   </button>
-
-                  <button className="btn-delete" onClick={() => deleteCategory(cat.id)}>
+                  <button className="btn-delete btn-action-wide" onClick={() => deleteCategory(cat.id)}>
                     Delete
                   </button>
                 </div>
               </td>
-
             </tr>
           ))}
         </tbody>
-
       </table>
     </div>
   );

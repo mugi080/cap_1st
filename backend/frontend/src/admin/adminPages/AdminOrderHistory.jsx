@@ -1,6 +1,7 @@
 // src/pages/AdminOrderHistory.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './css/AdminOrderHistory.css';
 
 const AdminOrderHistory = () => {
   const [historyOrders, setHistoryOrders] = useState([]);

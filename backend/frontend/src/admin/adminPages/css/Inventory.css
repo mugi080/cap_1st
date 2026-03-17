@@ -1,95 +1,128 @@
+/* src/pages/admin/css/Inventory.css */
+
 .inventory-container {
-  padding: 30px 20px;
-  background: #f8f9fa;
+  padding: 40px 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
   min-height: 100vh;
+  font-size: 14px;
 }
 
 .inventory-container h1 {
   font-size: 2rem;
-  color: #222;
+  font-weight: 700;
+  background: linear-gradient(135deg, #222 0%, #ff4757 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 30px;
+  animation: fadeInHeader 0.8s ease-out;
+}
+
+@keyframes fadeInHeader {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .inventory-tabs {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 30px;
   flex-wrap: wrap;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 71, 87, 0.1);
 }
 
 .inventory-tab-btn {
   padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #e9ecef;
-  color: #666;
+  background: white;
+  color: #333;
+  min-width: 160px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .inventory-tab-btn:hover {
-  background: #dee2e6;
+  border-color: #ff4757;
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.1);
+  transform: translateY(-2px);
 }
 
-/* ✅ 100% Guaranteed working active color */
-.inventory-tab-btn.active,
-.inventory-tabs .inventory-tab-btn.active {
-  background: #0d6efd !important;  /* formal blue */
-  color: #fff !important;
+/* ✅ Active tab — use your brand color */
+.inventory-tab-btn.active {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%) !important;
+  color: white !important;
   border: none !important;
-  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
+  box-shadow: 0 4px 16px rgba(255, 71, 87, 0.25) !important;
+  transform: translateY(-2px) !important;
 }
 
 .inventory-content {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeInContent 0.5s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInContent {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-/* ✅ Responsive */
+/* === Responsive === */
 @media (max-width: 768px) {
   .inventory-container {
-    padding: 20px 15px;
+    padding: 30px 20px;
   }
 
   .inventory-container h1 {
-    font-size: 1.6rem;
-    margin-bottom: 20px;
+    font-size: 1.7rem;
+    margin-bottom: 24px;
   }
 
   .inventory-tabs {
-    gap: 8px;
+    padding: 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 
   .inventory-tab-btn {
-    padding: 10px 16px;
+    width: 100%;
+    min-width: unset;
+    padding: 12px 20px;
     font-size: 13px;
-    flex: 1;
+    border-width: 2px;
+  }
+
+  .inventory-tab-btn.active {
+    transform: none !important; /* No lift on mobile for stability */
   }
 }
 
 @media (max-width: 480px) {
   .inventory-container {
-    padding: 15px 12px;
+    padding: 20px 16px;
   }
 
   .inventory-container h1 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 
-  .inventory-tabs {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .inventory-tab-btn {align-self: start;
-    width: 100%;
-    padding: 12px;
-    font-size: 13px;
+  .inventory-tab-btn {
+    padding: 12px 16px;
+    font-size: 12px;
   }
 }

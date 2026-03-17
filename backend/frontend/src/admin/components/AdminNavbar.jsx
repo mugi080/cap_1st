@@ -1,7 +1,6 @@
-// src/components/admin/AdminNavbar.jsx
+// src/admin/components/AdminNavbar.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo.png';
 import './css/AdminNavbar.css';
 
 const AdminNavbar = ({ onMenuClick }) => {
@@ -27,7 +26,8 @@ const AdminNavbar = ({ onMenuClick }) => {
       </button>
 
       <div className="logo-container">
-        <img src={logo} alt="Logo" className="admin-logo" />
+        {/* ✅ Use public path directly — no import needed */}
+        <img src="/assets/logo.png" alt="Logo" className="admin-logo" />
       </div>
 
       <div className="navbar-right">

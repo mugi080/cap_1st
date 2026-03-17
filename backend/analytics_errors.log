@@ -1,0 +1,3 @@
+Error in monthly_sales_data: unsupported operand type(s) for -: 'float' and 'decimal.Decimal'
+Error in monthly_sales_data: unsupported operand type(s) for -: 'float' and 'decimal.Decimal'
+Error in monthly_sales_data: unsupported operand type(s) for -: 'float' and 'decimal.Decimal'

@@ -6,12 +6,12 @@ import "./css/StaffDashboard.css";
 const StaffDashboard = () => {
   const [staffName, setStaffName] = useState("Rider");
   const [staffId, setStaffId] = useState(null);
-  const [allOrders, setAllOrders] = useState([]);
+  const [assignedOrders, setAssignedOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showMenu, setShowMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Fetch staff profile
+  // Fetch profile
   useEffect(() => {
     const token = localStorage.getItem("staff_token") || localStorage.getItem("rider_token");
     if (!token) {
@@ -38,7 +38,7 @@ const StaffDashboard = () => {
       });
   }, []);
 
-  // Fetch all orders assigned to this rider
+  // Fetch orders
   useEffect(() => {
     if (!staffId) return;
 
@@ -53,12 +53,12 @@ const StaffDashboard = () => {
           return res.json();
         })
         .then((data) => {
-          const filtered = data.filter(
+          const riderDeliveries = data.filter(
             (order) =>
               order.delivery_type === "Delivered" &&
               order.assigned_staff === staffId
           );
-          setAllOrders(filtered);
+          setAssignedOrders(riderDeliveries);
           setLoading(false);
         })
         .catch((err) => {
@@ -69,20 +69,12 @@ const StaffDashboard = () => {
     };
 
     fetchOrders();
-    const interval = setInterval(fetchOrders, 30000); // Refresh every 30s
+    const interval = setInterval(fetchOrders, 30000);
     return () => clearInterval(interval);
   }, [staffId]);
 
-  // Calculate counts
-  const counts = {
-    pending: allOrders.filter((o) => o.status === "Pending").length,
-    processing: allOrders.filter((o) => o.status === "Processing").length,
-    inTransit: allOrders.filter((o) => o.status === "In Transit").length,
-    completed: allOrders.filter((o) => o.status === "Completed").length,
-  };
-
-  // Get only COMPLETED orders for history
-  const completedOrders = allOrders.filter((o) => o.status === "Completed");
+  const activeCount = assignedOrders.filter(o => o.status !== "Completed").length;
+  const completedOrders = assignedOrders.filter(o => o.status === "Completed");
 
   const handleLogout = () => {
     localStorage.removeItem("staff_token");
@@ -91,110 +83,101 @@ const StaffDashboard = () => {
   };
 
   return (
-    <div className="rider-dashboard">
+    <div className="staff-dashboard-root">
       {/* Header */}
-      <header className="rider-header">
-        <h1>Hello, {staffName}!</h1>
+      <header className="dashboard-header">
+        <p className="greeting">Hello, <strong>{staffName}</strong>!</p>
         <button
-          className="menu-btn"
+          className="hamburger"
           onClick={(e) => {
             e.stopPropagation();
-            setShowMenu(!showMenu);
+            setMenuOpen(!menuOpen);
           }}
+          aria-label="Toggle menu"
         >
           ☰
         </button>
 
-        {showMenu && (
-          <div className="compact-dropdown-menu">
-            <Link to="/staff/profile" className="dropdown-item">
-              👤 Profile
-            </Link>
-            <Link to="/staff/settings" className="dropdown-item">
-              ⚙️ Settings
-            </Link>
-            <button onClick={handleLogout} className="dropdown-item logout-item">
-              🔐 Logout
+        {menuOpen && (
+          <div className="dropdown-menu" onClick={() => setMenuOpen(false)}>
+            <Link to="/staff/profile" className="menu-link">Profile</Link>
+            <Link to="/staff/preferences" className="menu-link">Preferrence</Link>
+            
+            <button onClick={handleLogout} className="menu-logout">
+              Logout
             </button>
           </div>
         )}
       </header>
 
-      {/* Stats Row - All 4 in one line */}
-      <div className="stats-row">
-        <div className="stat-item stat-pending">
-          <div className="stat-value">{counts.pending}</div>
+      {/* Stats */}
+      <div className="stats-grid">
+        <div className="stat-box pending">
+          <div className="stat-number">{assignedOrders.filter(o => o.status === "Pending").length}</div>
           <div className="stat-label">New</div>
         </div>
-        <div className="stat-item stat-processing">
-          <div className="stat-value">{counts.processing}</div>
-          <div className="stat-label">Ready</div>
-        </div>
-        <div className="stat-item stat-intransit">
-          <div className="stat-value">{counts.inTransit}</div>
+        <div className="stat-box in-transit">
+          <div className="stat-number">{assignedOrders.filter(o => o.status === "In Transit").length}</div>
           <div className="stat-label">On Way</div>
         </div>
-        <div className="stat-item stat-completed">
-          <div className="stat-value">{counts.completed}</div>
+        <div className="stat-box completed">
+          <div className="stat-number">{completedOrders.length}</div>
           <div className="stat-label">Delivered</div>
         </div>
       </div>
 
-      {/* Action Button */}
-      <div className="action-buttons">
-        <Link to="/staff/deliveries" className="btn btn-primary">
-          📦 My Deliveries ({allOrders.length - counts.completed})
+      {/* Main Action Button */}
+      <div className="primary-action">
+        <Link to="/staff/deliveries" className="action-button">
+          My Deliveries ({activeCount})
         </Link>
       </div>
 
-      {/* Order History */}
+      {/* Finished Deliveries */}
       {completedOrders.length > 0 && (
-        <div className="recent-section">
-          <h2>Order History</h2>
-          <div className="order-list">
+        <section className="finished-section">
+          <p className="section-title">Finished Deliveries</p>
+          <div className="orders-grid">
             {completedOrders.slice(0, 5).map((order) => (
-              <div key={order.id} className="order-card">
-                <div className="order-header">
-                  <strong>#{order.id}</strong>
-                  <span className="status-tag status-completed">{order.status}</span>
+              <Link key={order.id} to={`/staff/order-details/${order.id}`} className="order-tile">
+                <div className="order-header-row">
+                  <span className="order-id">Order #{order.id}</span>
+                  <span className="status-badge completed">Completed</span>
                 </div>
-                <div className="order-customer">{order.customer_name}</div>
-                <div className="order-address">
-                  {order.text_address ? `${order.text_address.substring(0, 60)}...` : "N/A"}
-                </div>
-                <div className="order-contact">📞 {order.contact_number || "N/A"}</div>
-              </div>
+                <p className="customer-name">{order.customer_name}</p>
+                <p className="delivery-address">
+                  {order.address ? `${order.address.substring(0, 60)}...` : "N/A"}
+                </p>
+                <p className="contact-info">{order.contact_number || "N/A"}</p>
+              </Link>
             ))}
           </div>
-          <Link to="/staff/history" className="view-all">
-            View All →
-          </Link>
-        </div>
+          <Link to="/staff/history" className="view-all-link">View All →</Link>
+        </section>
       )}
 
       {/* Empty State */}
-      {!loading && allOrders.length === 0 && !error && (
-        <div className="empty-state">
-          <p>📭 No deliveries yet.</p>
-          <p>You'll see your delivery list once assigned.</p>
+      {!loading && assignedOrders.length === 0 && !error && (
+        <div className="empty-message">
+          <p>No deliveries assigned yet.</p>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="error-box">
-          <p>⚠️ {error}</p>
-          <button onClick={() => window.location.reload()} className="retry-btn">
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()} className="retry-button">
             Retry
           </button>
         </div>
       )}
 
-      {/* Loading Spinner */}
+      {/* Loading State */}
       {loading && (
-        <div className="loading-state">
+        <div className="loading-indicator">
           <div className="spinner"></div>
-          <p>Loading your deliveries...</p>
+          <p>Loading...</p>
         </div>
       )}
     </div>

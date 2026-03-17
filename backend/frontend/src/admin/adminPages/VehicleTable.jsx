@@ -7,7 +7,7 @@ const VehicleTable = () => {
   const [vehicles, setVehicles] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
-    plate_number: '',
+    plate_number: '', // 👈 ADDED
     capacity: '',
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +21,6 @@ const VehicleTable = () => {
   const token = localStorage.getItem('admin_token');
   const headers = { Authorization: `Bearer ${token}` };
 
-  // Fetch vehicles
   const fetchVehicles = async () => {
     setLoading(true);
     try {
@@ -38,14 +37,12 @@ const VehicleTable = () => {
     fetchVehicles();
   }, []);
 
-  // Auto-focus on add mode
   useEffect(() => {
     if (!isEditing && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isEditing]);
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -54,25 +51,23 @@ const VehicleTable = () => {
     }
   };
 
-  // Validate form
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required.';
-    if (!formData.plate_number.trim()) newErrors.plate_number = 'Plate number is required.';
+    if (!formData.name.trim()) newErrors.name = 'Vehicle name is required.';
+    if (!formData.plate_number.trim()) newErrors.plate_number = 'Plate number is required.'; // 👈
     if (!formData.capacity || formData.capacity <= 0) newErrors.capacity = 'Capacity must be > 0';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     const payload = {
       name: formData.name.trim(),
-      plate_number: formData.plate_number.trim().toUpperCase(),
+      plate_number: formData.plate_number.trim(), // 👈 INCLUDED
       capacity: Number(formData.capacity),
       is_available: true,
     };
@@ -90,27 +85,27 @@ const VehicleTable = () => {
       fetchVehicles();
     } catch (err) {
       const errMsg =
-        err.response?.data?.detail ||
         err.response?.data?.plate_number?.[0] ||
+        err.response?.data?.name?.[0] ||
+        err.response?.data?.capacity?.[0] ||
+        err.response?.data?.detail ||
         'Save failed. Please try again.';
       setMessage(`Error: ${errMsg}`);
     }
     setTimeout(() => setMessage(''), 4000);
   };
 
-  // Reset form
   const resetForm = () => {
-    setFormData({ name: '', plate_number: '', capacity: '' });
+    setFormData({ name: '', plate_number: '', capacity: '' }); // 👈 RESET PLATE
     setIsEditing(false);
     setEditId(null);
     setErrors({});
   };
 
-  // Edit vehicle
   const handleEdit = (vehicle) => {
     setFormData({
       name: vehicle.name,
-      plate_number: vehicle.plate_number,
+      plate_number: vehicle.plate_number || '', // 👈
       capacity: vehicle.capacity.toString(),
     });
     setIsEditing(true);
@@ -119,23 +114,11 @@ const VehicleTable = () => {
     setErrors({});
   };
 
-  // Delete vehicle
   const handleDelete = async (id) => {
     const vehicle = vehicles.find(v => v.id === id);
     if (!vehicle) return;
 
-    const hasActiveAssignment = vehicles.some(order =>
-      order.assigned_vehicle === id &&
-      ['Pending', 'Processing', 'In Transit'].includes(order.status)
-    );
-
-    if (hasActiveAssignment) {
-      setMessage('Cannot delete: Vehicle is assigned to an active delivery.');
-      setTimeout(() => setMessage(''), 3000);
-      return;
-    }
-
-    const confirm = window.confirm(`Delete "${vehicle.name}"? This cannot be undone.`);
+    const confirm = window.confirm(`Delete "${vehicle.name}" (${vehicle.plate_number})? This cannot be undone.`);
     if (!confirm) return;
 
     try {
@@ -148,7 +131,6 @@ const VehicleTable = () => {
     setTimeout(() => setMessage(''), 4000);
   };
 
-  // Mark unavailable
   const handleMarkUnavailable = async (vehicleId) => {
     try {
       await axios.patch(
@@ -164,7 +146,6 @@ const VehicleTable = () => {
     setTimeout(() => setMessage(''), 2000);
   };
 
-  // Mark available
   const handleMarkAvailable = async (vehicleId) => {
     try {
       await axios.patch(
@@ -182,9 +163,8 @@ const VehicleTable = () => {
 
   return (
     <div className="vehicle-container">
-      <h2>Fleet Management</h2>
+      <h2>Vehicle Management</h2>
 
-      {/* Form Section */}
       <div className="form-wrapper">
         <h3>{isEditing ? 'Edit Vehicle' : 'Add New Vehicle'}</h3>
         <form onSubmit={handleSubmit} className="vehicle-form">
@@ -199,6 +179,7 @@ const VehicleTable = () => {
           />
           {errors.name && <span className="error-text">{errors.name}</span>}
 
+          {/* ✅ PLATE NUMBER INPUT */}
           <input
             type="text"
             name="plate_number"
@@ -214,7 +195,7 @@ const VehicleTable = () => {
             name="capacity"
             value={formData.capacity}
             onChange={handleChange}
-            placeholder="Max Capacity (cases)"
+            placeholder="Max Capacity (kg)"
             min="1"
             className={errors.capacity ? 'error' : ''}
           />
@@ -238,9 +219,8 @@ const VehicleTable = () => {
         )}
       </div>
 
-      {/* Table Section */}
       <div className="table-wrapper">
-        <h3>Current Fleet ({vehicles.length})</h3>
+        <h3>Current vehicle ({vehicles.length})</h3>
         {loading ? (
           <p className="loading">Loading vehicles...</p>
         ) : vehicles.length === 0 ? (
@@ -251,7 +231,7 @@ const VehicleTable = () => {
               <thead>
                 <tr>
                   <th>Vehicle</th>
-                  <th>Plate</th>
+                  <th>Plate</th> {/* 👈 */}
                   <th>Capacity</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -261,8 +241,8 @@ const VehicleTable = () => {
                 {vehicles.map((v) => (
                   <tr key={v.id}>
                     <td><strong>{v.name}</strong></td>
-                    <td><code>{v.plate_number}</code></td>
-                    <td>{v.capacity} case{v.capacity !== 1 ? 's' : ''}</td>
+                    <td>{v.plate_number || '–'}</td> {/* 👈 */}
+                    <td>{v.capacity} kg</td>
                     <td>
                       <span className={`status-badge ${v.is_available ? 'available' : 'unavailable'}`}>
                         {v.is_available ? 'Available' : 'Unavailable'}

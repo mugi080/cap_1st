@@ -1,7 +1,7 @@
 /* src/pages/admin/css/AdminOrders.css */
 
 .orders-container {
-  padding: 40px 24px;
+  padding: 0 24px 16px 24px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
   min-height: 100vh;
@@ -48,13 +48,13 @@
 
 /* Header */
 h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   background: linear-gradient(135deg, #222 0%, #ff4757 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 30px;
+  margin: 8px 0 12px 0;
   animation: fadeIn 0.8s ease-out;
 }
 
@@ -71,7 +71,7 @@ h1 {
 
 /* Search Section */
 .search-section {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .search-section input {
@@ -102,34 +102,51 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 16px;
   background: white;
-  padding: 20px;
+  padding: 14px 18px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255, 71, 87, 0.1);
 }
 
-.orders-actions label {
+.filters-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filters-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
   font-weight: 600;
   color: #222;
-  font-size: 13px;
-  letter-spacing: 0.3px;
-  margin-right: 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .orders-actions select {
-  padding: 10px 14px;
+  padding: 8px 32px 8px 12px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   background: white;
   font-size: 13px;
-  min-width: 180px;
+  min-width: 160px;
   font-weight: 500;
   transition: all 0.3s ease;
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }
 
 .orders-actions select:hover {
@@ -210,10 +227,11 @@ h1 {
 
 .orders-table th,
 .orders-table td {
-  padding: 14px 12px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
   font-size: 13px;
+  vertical-align: middle;
 }
 
 .orders-table th {
@@ -264,10 +282,31 @@ h1 {
   width: 100%;
 }
 
-/* Status Select */
+/* Status Select with Custom Arrow */
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #666;
+  font-size: 10px;
+  transition: all 0.3s ease;
+}
+
+.select-wrapper:hover .select-arrow {
+  color: #ff4757;
+}
+
 .status-select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 8px 32px 8px 10px;
   border: 2px solid #e0e0e0;
   border-radius: 6px;
   background: white;
@@ -276,6 +315,7 @@ h1 {
   transition: all 0.3s ease;
   font-weight: 500;
   cursor: pointer;
+  appearance: none;
 }
 
 .status-select:hover {
@@ -553,162 +593,6 @@ h1 {
   font-weight: 600;
 }
 
-/* Responsive */
-@media (max-width: 992px) {
-  .orders-container {
-    padding: 30px 20px;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  .orders-actions {
-    gap: 14px;
-    padding: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .orders-container {
-    padding: 20px 16px;
-    font-size: 13px;
-  }
-
-  h1 {
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-  }
-
-  .search-section input {
-    max-width: 100%;
-  }
-
-  .orders-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 14px;
-  }
-
-  .orders-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .btn-create,
-  .btn-history {
-    width: 100%;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .btn-view,
-  .btn-delete {
-    width: 100%;
-    justify-content: center;
-    padding: 8px 12px;
-  }
-
-  .table-wrapper {
-    font-size: 12px;
-    border-radius: 8px;
-  }
-
-  .orders-table th,
-  .orders-table td {
-    padding: 10px 8px;
-    font-size: 12px;
-  }
-
-  .orders-modal {
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .orders-modal h2 {
-    font-size: 1.4rem;
-    margin-bottom: 18px;
-  }
-
-  .orders-modal h3 {
-    font-size: 1.1rem;
-    margin: 18px 0 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .orders-container {
-    padding: 15px 12px;
-    font-size: 12px;
-  }
-
-  h1 {
-    font-size: 1.4rem;
-  }
-
-  .search-section input {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
-
-  .orders-actions {
-    padding: 12px;
-    gap: 10px;
-  }
-
-  .orders-actions select {
-    font-size: 12px;
-    padding: 8px 10px;
-    min-width: unset;
-  }
-
-  .btn-create,
-  .btn-history {
-    font-size: 11px;
-    padding: 8px 12px;
-  }
-
-  .table-wrapper {
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-
-  .orders-table th,
-  .orders-table td {
-    padding: 8px 6px;
-    font-size: 11px;
-  }
-
-  .btn-view,
-  .btn-delete {
-    font-size: 10px;
-    padding: 6px 10px;
-    min-width: 60px;
-  }
-
-  .orders-modal {
-    padding: 16px;
-    width: 95%;
-  }
-
-  .orders-modal h2 {
-    font-size: 1.2rem;
-  }
-
-  .orders-modal h3 {
-    font-size: 1rem;
-  }
-
-  .modal-table th,
-  .modal-table td {
-    padding: 8px 6px;
-    font-size: 11px;
-  }
-}
 /* Badges */
 .badge-paid {
   color: #155724;
@@ -766,4 +650,216 @@ h1 {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .orders-container {
+    padding: 0 16px 14px 16px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 8px 0 10px 0;
+  }
+
+  .orders-actions {
+    gap: 12px;
+    padding: 12px 14px;
+  }
+  
+  .filters-group {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 0 12px 12px 12px;
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 6px 0 10px 0;
+  }
+
+  .search-section {
+    margin-bottom: 10px;
+  }
+
+  .search-section input {
+    max-width: 100%;
+  }
+
+  .orders-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .filters-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .filters-group label {
+    width: 100%;
+  }
+  
+  .orders-actions select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .orders-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-create,
+  .btn-history {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .btn-view,
+  .btn-delete {
+    width: 100%;
+    justify-content: center;
+    padding: 7px 12px;
+  }
+
+  .table-wrapper {
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 8px 8px;
+    font-size: 12px;
+  }
+
+  .orders-modal {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .orders-modal h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+
+  .orders-modal h3 {
+    font-size: 1.1rem;
+    margin: 16px 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-container {
+    padding: 0 10px 10px 10px;
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+    margin: 4px 0 8px 0;
+  }
+
+  .search-section {
+    margin-bottom: 8px;
+  }
+
+  .search-section input {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .orders-actions {
+    padding: 10px;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .orders-actions select {
+    font-size: 12px;
+    padding: 7px 28px 7px 10px;
+    min-width: unset;
+  }
+
+  .btn-create,
+  .btn-history {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .table-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 7px 6px;
+    font-size: 11px;
+  }
+
+  .btn-view,
+  .btn-delete {
+    font-size: 10px;
+    padding: 6px 10px;
+    min-width: 60px;
+  }
+
+  .orders-modal {
+    padding: 14px;
+    width: 95%;
+  }
+
+  .orders-modal h2 {
+    font-size: 1.2rem;
+  }
+
+  .orders-modal h3 {
+    font-size: 1rem;
+  }
+
+  .modal-table th,
+  .modal-table td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+}
+/* Compact Table Rows */
+.orders-table th,
+.orders-table td {
+  padding: 6px 10px !important;
+  font-size: 12.5px;
+}
+
+.orders-table th {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Reduce action button height */
+.btn-view,
+.btn-delete {
+  padding: 4px 10px !important;
+  min-height: 24px;
+  font-size: 11px !important;
+}
+
+.inline-mark-paid {
+  padding: 3px 6px !important;
+  font-size: 11px !important;
 }

@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
+from django.core.exceptions import ValidationError
 
 
 class CustomUserManager(BaseUserManager):
@@ -38,6 +39,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     address = models.TextField(blank=True, null=True)
     contact_number = models.CharField(max_length=15, blank=True, null=True)
 
+    # 👇 NEW: Staff preference fields (only used when role == 'staff')
+    preferred_vehicle = models.ForeignKey(
+        'Vehicle',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='preferred_by_staff'
+    )
+    familiar_barangays = models.JSONField(default=list, blank=True)  # e.g., ["Mayao Crossing", "Poblacion"]
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -46,6 +57,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
+
+    profile_picture = models.ImageField(
+        upload_to='profile_pictures/',
+        blank=True,
+        null=True
+    )
 
     def save(self, *args, **kwargs):
         if self.role == 'staff':
@@ -83,12 +100,27 @@ class BeverageCategory(models.Model):
 class Beverage(models.Model):
     category = models.ForeignKey(BeverageCategory, on_delete=models.CASCADE, related_name="beverages")
     name = models.CharField(max_length=100)
-    volume = models.DecimalField(max_digits=5, decimal_places=2)  
+    volume = models.DecimalField(max_digits=6, decimal_places=2)  
     price = models.DecimalField(max_digits=6, decimal_places=2)  # per case
-    stock = models.DecimalField(max_digits=10, decimal_places=1, default=0)  # ✅ allows 0.5
+    stock = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     is_available = models.BooleanField(default=True)
     image = models.ImageField(upload_to="beverages/", blank=True, null=True)
-    units_per_case = models.PositiveIntegerField(default=24)  # bottles in 1 case
+    units_per_case = models.PositiveIntegerField(default=24)
+    
+    UNIT_LABEL_CHOICES = [
+        ('case', 'Case'),
+        ('box', 'Box'),
+        ('pack', 'Pack'),
+        ('carton', 'Carton'),
+    ]
+
+    unit_label = models.CharField(
+        max_length=20,
+        default="case",
+        choices=UNIT_LABEL_CHOICES, 
+    )
+
+    allow_half_case = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -99,8 +131,6 @@ class Beverage(models.Model):
     def save(self, *args, **kwargs):
         self.is_available = self.stock > 0
         super().save(*args, **kwargs)
-
-    # In Beverage model
 
     def update_stock(self, cases):
         from decimal import Decimal
@@ -139,6 +169,8 @@ ORDER_STATUS_CHOICES = [
     ('Pending', 'Pending'),
     ('Processing', 'Processing'),
     ('In Transit', 'In Transit'),
+    ('Delivered by Staff', 'Delivered by Staff'),
+    ('Confirmed by Customer', 'Confirmed by Customer'),
     ('Completed', 'Completed'),
     ('Cancelled', 'Cancelled'),
 ]
@@ -149,7 +181,35 @@ PAYMENT_STATUS_CHOICES = [
     ("Rejected", "Rejected"),
 ]
 
-from django.core.exceptions import ValidationError
+LUCENA_BARANGAYS = [
+
+    ("Barra", "Barra"),
+    ("Cotta", "Cotta"),
+    ("Dalahican", "Dalahican"),
+    ("Domoit", "Domoit"),
+    ("Dupay", "Dupay"),
+    ("Gulang-gulang", "Gulang-gulang"),
+    ("Ibabang Dupay", "Ibabang Dupay"),
+    ("Ibabang Iyam", "Ibabang Iyam"),
+    ("Ibabang Talim", "Ibabang Talim"),
+    ("Ilayang Dupay", "Ilayang Dupay"),
+    ("Ilayang Iyam", "Ilayang Iyam"),
+    ("Ilayang Talim", "Ilayang Talim"),
+    ("Isabang", "Isabang"),
+    ("Iyam", "Iyam"),
+    ("Market View", "Market View"),
+    ("Mayao Castillo", "Mayao Castillo"),
+    ("Mayao Crossing", "Mayao Crossing"),
+    ("Mayao Kanluran", "Mayao Kanluran"),
+    ("Mayao Parada", "Mayao Parada"),
+    ("Mayao Silangan", "Mayao Silangan"),
+    ("Ransohan", "Ransohan"),
+    ("Salinas", "Salinas"),
+    ("Talao-talao", "Talao-talao"),
+
+]
+
+
 class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -159,6 +219,8 @@ class Order(models.Model):
     )
     customer_name = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
     text_address = models.CharField(max_length=255, blank=True, null=True)
     payment_method = models.CharField(max_length=50, blank=True, null=True)
     contact_number = models.CharField(max_length=15, blank=True, null=True)
@@ -170,7 +232,7 @@ class Order(models.Model):
     )
 
     status = models.CharField(
-        max_length=20,
+        max_length=25,
         choices=ORDER_STATUS_CHOICES,
         default='Pending'
     )
@@ -198,13 +260,21 @@ class Order(models.Model):
         default="Pending"
     )
 
+    barangay = models.CharField(
+        max_length=100,
+        choices=LUCENA_BARANGAYS,
+        blank=True,
+        null=True,
+        help_text="Barangay for delivery location"
+    )
+
     gcash_receipt = models.ImageField(upload_to='gcash_receipts/', blank=True, null=True)
 
     review_comment = models.TextField(blank=True, null=True)
     review_rating = models.IntegerField(blank=True, null=True)
     reviewed_at = models.DateTimeField(blank=True, null=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -214,18 +284,15 @@ class Order(models.Model):
     def clean(self):
         super().clean()
 
-        # GCash requires receipt
         if self.payment_method == "GCash" and self.payment_status == "Pending":
             if not self.gcash_receipt:
                 raise ValidationError("GCash receipt is required for pending GCash payments.")
 
-        # Pickup orders shouldn't have staff or vehicle
         if self.delivery_type == 'Pickup':
             if self.assigned_staff or self.assigned_vehicle:
                 raise ValidationError("Pickup orders shouldn't have staff or vehicle assigned.")
 
     def save(self, *args, **kwargs):
-        # Track previous state
         old_status = None
         old_assigned_vehicle = None
 
@@ -236,35 +303,47 @@ class Order(models.Model):
                 old_assigned_vehicle = old_instance.assigned_vehicle
             except Order.DoesNotExist:
                 pass
-        else:
-            old_status = None
-            old_assigned_vehicle = None
 
-        # Save main object first
         super().save(*args, **kwargs)
 
-        # Handle vehicle availability only after save
         if self.assigned_vehicle:
-            # Going into In Transit → lock vehicle
             if self.status == 'In Transit' and old_status != 'In Transit':
                 self.assigned_vehicle.is_available = False
                 self.assigned_vehicle.save()
-
-            # Leaving In Transit (completed/cancelled) → release vehicle
             if old_status == 'In Transit' and self.status in ['Completed', 'Cancelled']:
                 self.assigned_vehicle.is_available = True
                 self.assigned_vehicle.save()
-
-            # Vehicle changed → free old one
             if old_assigned_vehicle and old_assigned_vehicle != self.assigned_vehicle:
                 old_assigned_vehicle.is_available = True
                 old_assigned_vehicle.save()
 
-        # Auto-mark as paid when completed
-        if self.status == 'Completed' and not self.is_paid:
+    def mark_delivered_by_staff(self):
+        if self.delivery_type == 'Pickup':
+            raise ValidationError("Pickup orders don't require delivery confirmation.")
+        if self.status not in ['In Transit', 'Processing']:
+            raise ValidationError("Order must be in transit to mark as delivered.")
+        self.status = 'Delivered by Staff'
+        self.save(update_fields=['status'])
+
+    def mark_confirmed_by_customer(self):
+        if self.delivery_type == 'Pickup':
+            self.status = 'Completed'
+            self._finalize_payment()
+        elif self.status == 'Delivered by Staff':
+            self.status = 'Completed'
+            self._finalize_payment()
+        elif self.status == 'Completed':
+            return
+        else:
+            raise ValidationError("Delivery not yet marked by staff.")
+        self.save(update_fields=['status', 'is_paid', 'payment_date'])
+
+    def _finalize_payment(self):
+        if not self.is_paid:
             self.is_paid = True
             self.payment_date = timezone.now()
-            super().save(update_fields=['is_paid', 'payment_date'])
+            if self.payment_status == "Pending":
+                self.payment_status = "Paid"
 
     @property
     def is_completed(self):
@@ -278,7 +357,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name="items")
     beverage = models.ForeignKey('Beverage', on_delete=models.CASCADE)
-    cases_ordered = models.DecimalField(max_digits=10, decimal_places=1, default=1)  # ✅
+    cases_ordered = models.DecimalField(max_digits=10, decimal_places=1, default=1)
     price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     class Meta:
@@ -292,7 +371,6 @@ class OrderItem(models.Model):
         if not self.price and self.beverage:
             self.price = self.beverage.price
         super().save(*args, **kwargs)
-
 
     @property
     def total_price(self):
@@ -310,7 +388,7 @@ class Cart(models.Model):
         verbose_name_plural = "Carts"
 
     def __str__(self):
-        return f"Cart #{self.id} for User {self.user.username}"
+        return f"Cart #{self.id} for User {self.user.username}" if self.user else f"Cart #{self.id} (Guest)"
 
     @property
     def total_price(self):
@@ -327,11 +405,11 @@ class CartItem(models.Model):
         verbose_name_plural = "Cart Items"
 
     def __str__(self):
-        return f"{self.beverage.name} - {self.cases_ordered} case(s)"  # ✅ FIXED
+        return f"{self.beverage.name} - {self.cases_ordered} case(s)"
 
     @property
     def total_price(self):
-        return self.cases_ordered * self.beverage.price  # ✅ FIXED
+        return self.cases_ordered * self.beverage.price
 
 
 class RoleRequest(models.Model):
@@ -374,7 +452,7 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.email}"
-    
+
 
 class OrderReview(models.Model):
     order = models.ForeignKey(
@@ -389,3 +467,22 @@ class OrderReview(models.Model):
 
     def __str__(self):
         return f"Review for Order #{self.order.id} - {self.rating}★"
+    
+
+
+class StaffPreference(models.Model):
+    staff = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='staff_preference'
+    )
+    preferred_vehicle = models.ForeignKey(
+        'Vehicle',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    familiar_barangays = models.JSONField(default=list, blank=True)
+
+    def __str__(self):
+        return f"Preferences for {self.staff.email}"

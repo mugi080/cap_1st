@@ -1,3 +1,4 @@
+// src/pages/AdminLogin.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -16,6 +17,7 @@ function AdminLogin() {
     setMessage('');
 
     try {
+      // Step 1: Get JWT token
       const response = await axios.post(
         'http://localhost:8000/auth/jwt/create/',
         { email, password },
@@ -23,25 +25,30 @@ function AdminLogin() {
       );
 
       const access = response.data.access;
-      localStorage.setItem('admin_token', access);
 
+      // Step 2: Fetch user profile
       const me = await axios.get('http://localhost:8000/auth/users/me/', {
         headers: { Authorization: `Bearer ${access}` },
       });
 
-      if (me.data.is_staff || me.data.is_superuser) {
+      // ✅ ONLY allow superusers (true admins)
+      if (me.data.is_superuser) {
+        localStorage.setItem('admin_token', access);
         localStorage.setItem('admin_data', JSON.stringify(me.data));
         navigate('/admin/dashboard');
       } else {
-        setMessage('Access Denied: You are not an admin.');
+        setMessage('Access Denied: Admins only.');
+        localStorage.removeItem('admin_token');
       }
     } catch (err) {
       setLoading(false);
-      if (err.response && err.response.status === 401) {
+      if (err.response?.status === 401) {
         setMessage('Invalid email or password');
       } else {
-        setMessage('Login failed! Please check your credentials or try again later.');
+        setMessage('Login failed. Please try again.');
       }
+    } finally {
+      if (loading) setLoading(false);
     }
   };
 
@@ -49,7 +56,7 @@ function AdminLogin() {
     <div className="form-container">
       <h2 className="title">Admin Login</h2>
 
-      {message && <p style={{ color: 'red' }}>{message}</p>}
+      {message && <p className="error-message">{message}</p>}
 
       <form onSubmit={loginHandler} className="form">
         <input

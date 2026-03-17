@@ -154,7 +154,10 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'api.serializers.CustomUserCreateSerializer',
         'user': 'api.serializers.CustomUserReadSerializer',  # Use this for GET /users/me/
+        
         'current_user': 'api.serializers.CustomUserReadSerializer',  # Specifically for /users/me/
+    
+        'user_update': 'api.serializers.CustomUserUpdateSerializer',
     }
 }
 

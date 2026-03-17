@@ -1,0 +1,346 @@
+/* src/pages/css/AdminOrderHistory.css */
+
+.admin-order-history {
+  padding: 40px 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
+  min-height: 100vh;
+  color: #000; /* ✅ MAIN TEXT IN BLACK */
+  font-size: 14px;
+}
+
+.admin-order-history h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000; /* Ensure black */
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* Search Input */
+.search-input {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 24px;
+  background: white;
+  color: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff4757;
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.15);
+}
+
+/* Error & Empty States */
+.error-message,
+.no-orders {
+  text-align: center;
+  padding: 24px;
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.no-orders {
+  color: #666;
+  font-style: italic;
+}
+
+/* Results Count */
+.results-count {
+  text-align: right;
+  margin-top: 12px;
+  color: #555;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Table */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #000; /* ✅ Black text in table */
+}
+
+.orders-table th {
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
+  font-weight: 700;
+  color: #000;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 2px solid rgba(255, 71, 87, 0.1);
+}
+
+.orders-table tbody tr:hover {
+  background-color: rgba(255, 107, 53, 0.03);
+}
+
+/* Date */
+.date-only {
+  font-weight: 600;
+}
+
+/* Total Price */
+.total-price {
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+/* Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+/* Payment Badges */
+.badge.payment-cash,
+.badge.payment-cash\ on\ delivery {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+/* Delivery Badges */
+.badge.delivery-pickup {
+  background: #f1f8e9;
+  color: #558b2f;
+  border: 1px solid #dcedc8;
+}
+
+.badge.delivery-delivered {
+  background: #fff8e1;
+  color: #e65100;
+  border: 1px solid #ffecb3;
+}
+
+/* Paid / Unpaid */
+.badge.paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.badge.unpaid {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* View Button */
+.btn-view {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+  min-width: 50px;
+}
+
+.btn-view:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* === MODAL === */
+.orders-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.orders-modal {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  font-size: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  color: #000; /* ✅ Black text in modal */
+}
+
+.orders-modal h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.orders-modal h3 {
+  margin: 24px 0 16px;
+  color: #000;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(255, 71, 87, 0.2);
+  padding-bottom: 10px;
+}
+
+/* Modal Table */
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+
+.modal-table th,
+.modal-table td {
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  color: #000;
+  text-align: left;
+}
+
+.modal-table th {
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
+  font-weight: 700;
+  color: #000;
+  font-size: 13px;
+}
+
+/* Close Button */
+.btn-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.btn-close:hover {
+  background: #ff4757;
+  color: white;
+  border-color: #ff4757;
+  transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-order-history {
+    padding: 24px 16px;
+    font-size: 13px;
+  }
+
+  .admin-order-history h2 {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+
+  .search-input {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .orders-table {
+    font-size: 12px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 10px 8px;
+  }
+
+  .btn-view {
+    font-size: 10px;
+    padding: 5px 10px;
+    min-width: 40px;
+  }
+
+  .orders-modal {
+    padding: 20px;
+    width: 95%;
+  }
+
+  .orders-modal h2 {
+    font-size: 1.5rem;
+  }
+
+  .modal-table th,
+  .modal-table td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-order-history {
+    padding: 16px 12px;
+    font-size: 12px;
+  }
+
+  .admin-order-history h2 {
+    font-size: 1.4rem;
+  }
+
+  .search-input {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .date-only,
+  .total-price {
+    font-size: 12px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+}

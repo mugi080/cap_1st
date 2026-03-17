@@ -650,3 +650,102 @@
     padding: 8px 12px;
   }
 }
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.stat-card.warning {
+  border-left: 4px solid #F59E0B;
+}
+
+.stat-card.critical {
+  border-left: 4px solid #EF4444;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* Analytics Table */
+.analytics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.analytics-table th,
+.analytics-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.analytics-table th {
+  background: #f1f5f9;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+/* Risk & Urgency Badges */
+.risk-badge,
+.urgency-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.risk-high { background: #fee2e2; color: #dc2626; }
+.risk-medium { background: #ffedd5; color: #ea580c; }
+.risk-low { background: #dcfce7; color: #16a34a; }
+
+.urgency-critical { background: #fee2e2; color: #dc2626; }
+.urgency-high { background: #ffedd5; color: #ea580c; }
+.urgency-medium { background: #fef3c7; color: #ca8a04; }
+.urgency-low { background: #dcfce7; color: #16a34a; }
+
+/* Nested Charts */
+.nested {
+  margin-bottom: 24px;
+}
+
+/* ABC Insights */
+.abc-insights ul {
+  margin-top: 16px;
+  padding-left: 20px;
+}
+
+.abc-insights li {
+  margin-bottom: 8px;
+  color: #475569;
+}
+
+/* Seasonality Insights */
+.seasonality-insights {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #3B82F6;
+}

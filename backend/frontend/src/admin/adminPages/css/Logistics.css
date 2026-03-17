@@ -46,6 +46,12 @@
   border: 1px solid #f1b0b7;
 }
 
+.notification.info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+  border: 1px solid #a3daff;
+}
+
 /* === Header === */
 .logistics-header h2 {
   font-size: 2rem;
@@ -240,7 +246,6 @@
   box-shadow: inset 0 0 12px rgba(255, 71, 87, 0.05);
 }
 
-/* Column widths for better readability */
 .logistics-table th:nth-child(4),
 .logistics-table td:nth-child(4),
 .logistics-table th:nth-child(5),
@@ -249,7 +254,6 @@
   width: 200px;
 }
 
-/* Checkbox alignment */
 .logistics-table th:first-child,
 .logistics-table td:first-child {
   width: 40px;
@@ -257,7 +261,6 @@
   padding: 14px 0;
 }
 
-/* Links */
 .customer-link {
   color: #ff4757;
   text-decoration: none;
@@ -286,7 +289,7 @@
   width: 100%;
 }
 
-/* Dropdowns in table */
+/* === Dropdowns === */
 .table-dropdown {
   width: 100%;
   padding: 8px 10px;
@@ -311,20 +314,24 @@
   box-shadow: 0 4px 16px rgba(255, 71, 87, 0.15);
 }
 
-/* === ACTION BUTTON COLORS REFERENCE ===
-   - ARCHIVE/DEACTIVATE: Gray (#6c757d)
-   - EDIT/UPDATE: Blue (#2196f3)
-   - DELETE/REMOVE: Red (#dc3545)
-   - SAVE/CONFIRM: Green (#4caf50)
-   - CANCEL/CLOSE: Gray (#6c757d)
-   - VIEW/DETAILS: Purple (#9c27b0)
-   - ADD/CREATE: Green (#4caf50)
-   - EXPORT: Teal (#17a2b8)
-   - DOWNLOAD: Indigo (#3f51b5)
-   - RESTORE: Orange (#ff9800)
-*/
+/* === AUTO VEHICLE DISPLAY (NO DROPDOWN) === */
+.vehicle-auto {
+  padding: 8px 10px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #475569;
+  font-weight: 500;
+  font-size: 13px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: default;
+  user-select: none;
+}
 
-/* Action Buttons */
+/* === Action Buttons === */
 .action-buttons {
   display: flex;
   gap: 6px;
@@ -353,7 +360,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* SAVE/CONFIRM - Green */
 .action-btn-save {
   background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
   color: white;
@@ -363,7 +369,6 @@
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-/* CANCEL/CLOSE - Gray */
 .action-btn-cancel {
   background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
   color: white;
@@ -373,27 +378,17 @@
   box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
-/* EDIT/UPDATE - Blue */
-.action-btn-edit {
+/* VIEW — Matches AdminOrders (Blue) */
+.action-btn-view {
   background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   color: white;
 }
 
-.action-btn-edit:hover {
+.action-btn-view:hover {
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
 }
 
-/* VIEW/DETAILS - Purple */
-.action-btn-view {
-  background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
-  color: white;
-}
-
-.action-btn-view:hover {
-  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
-}
-
-/* DELETE/REMOVE - Red */
 .action-btn-delete {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: white;
@@ -401,56 +396,6 @@
 
 .action-btn-delete:hover {
   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-/* ARCHIVE/DEACTIVATE - Dark Gray */
-.action-btn-archive {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
-}
-
-.action-btn-archive:hover {
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-}
-
-/* ADD/CREATE - Green */
-.action-btn-add {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-}
-
-.action-btn-add:hover {
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-/* EXPORT - Teal */
-.action-btn-export {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-  color: white;
-}
-
-.action-btn-export:hover {
-  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
-}
-
-/* DOWNLOAD - Indigo */
-.action-btn-download {
-  background: linear-gradient(135deg, #3f51b5 0%, #303f9f 100%);
-  color: white;
-}
-
-.action-btn-download:hover {
-  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
-}
-
-/* RESTORE - Orange */
-.action-btn-restore {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: white;
-}
-
-.action-btn-restore:hover {
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
 /* === Modal === */
@@ -539,7 +484,6 @@
   padding-bottom: 10px;
 }
 
-/* Modal Tables */
 .modal-table,
 .items-table {
   width: 100%;
@@ -749,5 +693,10 @@
   .items-table td {
     padding: 8px 6px;
     font-size: 11px;
+  }
+
+  .vehicle-auto {
+    font-size: 12px;
+    padding: 6px 8px;
   }
 }

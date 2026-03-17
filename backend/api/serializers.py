@@ -3,8 +3,10 @@ from django.contrib.auth.password_validation import validate_password
 from decimal import Decimal
 from .models import (
     BeverageCategory, Beverage, Order, OrderItem, CustomUser,
-    Cart, CartItem, DELIVERY_CHOICES, Vehicle, RoleRequest, Review, OrderReview
+    Cart, CartItem, DELIVERY_CHOICES, Vehicle, RoleRequest, Review, OrderReview,
+    LUCENA_BARANGAYS, StaffPreference,
 )
+
 
 # ----------------------------
 # Beverage Category Serializer
@@ -19,14 +21,38 @@ class BeverageCategorySerializer(serializers.ModelSerializer):
 # Beverage Serializer
 # ----------------------------
 class BeverageSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    
+    # New field: represents stock in CASES (not pieces)
+    stock_in_cases = serializers.SerializerMethodField()
+    
     class Meta:
         model = Beverage
-        fields = [
-            'id', 'name', 'category', 'volume', 'price',
-            'stock', 'is_available', 'created_at', 'updated_at', 'image',
-            'units_per_case',
-        ]
+        fields = '__all__'
         read_only_fields = ['created_at', 'updated_at']
+    
+    def get_stock_in_cases(self, obj):
+        if obj.units_per_case and obj.units_per_case > 0:
+            return float(obj.stock / obj.units_per_case)
+        return 0.0
+
+    def to_internal_value(self, data):
+        # Convert stock_in_cases back to pieces before saving
+        internal = super().to_internal_value(data)
+        
+        # If stock_in_cases is provided, override stock
+        stock_in_cases = data.get('stock_in_cases')
+        if stock_in_cases is not None:
+            try:
+                units = internal.get('units_per_case') or self.instance.units_per_case
+                if not units:
+                    units = 24  # fallback
+                stock_pieces = Decimal(str(stock_in_cases)) * Decimal(str(units))
+                internal['stock'] = stock_pieces
+            except (ValueError, TypeError, AttributeError):
+                pass  # fallback to existing stock if conversion fails
+        
+        return internal
 
 
 # ----------------------------
@@ -48,13 +74,20 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 # ----------------------------
-# Order Serializer
+# Order Serializer (USER-FACING)
 # ----------------------------
 class OrderSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all(), required=False)
-    items = OrderItemSerializer(many=True, read_only=True)
+    items = OrderItemSerializer(many=True, read_only=True,)
     can_review = serializers.SerializerMethodField()
     gcash_receipt = serializers.ImageField(required=False, allow_null=True)
+    # 👇 ADD BARANGAY FIELD
+    barangay = serializers.ChoiceField(
+        choices=[b[0] for b in LUCENA_BARANGAYS],
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
 
     assigned_staff = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.filter(role='staff'),
@@ -66,17 +99,20 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'user', 'customer_name', 'address', 'text_address',
+            'barangay',  # 👈 EXPLICITLY INCLUDED
             'payment_method', 'delivery_type', 'payment_status',
             'gcash_receipt',
             'created_at', 'updated_at', 'items', 'total_price',
             'contact_number', 'status', 'assigned_staff', 'assigned_vehicle',
             'review_comment', 'review_rating', 'reviewed_at', 'can_review',
-            'is_paid',           # ← ADDED: show payment status
-            'payment_date',      # ← ADDED: when payment was confirmed
+            'is_paid',
+            'payment_date',
+            'latitude',
+            'longitude',
         ]
         read_only_fields = [
             'review_comment', 'review_rating', 'reviewed_at', 'can_review',
-            'payment_date',     # ← Only backend sets this
+            'payment_date', 'latitude', 'longitude',
         ]
 
     def validate(self, data):
@@ -166,7 +202,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'email', 'first_name', 'last_name', 'middle_name',
             'password', 're_password',
-            'contact_number', 'address',
+            'contact_number', 'address', 'profile_picture'
         ]
         extra_kwargs = {
             'middle_name': {'required': False}
@@ -204,14 +240,70 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
+# ----------------------------
+# Custom User Serializer for Profile (Read + Write Preferences)
+# Used by Djoser for /auth/users/me/
+# ----------------------------
+class CurrentUserSerializer(serializers.ModelSerializer):
+    preferred_vehicle = serializers.PrimaryKeyRelatedField(
+        queryset=Vehicle.objects.all(),
+        allow_null=True,
+        required=False
+    )
+    familiar_barangays = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        required=False,
+        allow_empty=True
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id', 'email', 'first_name', 'middle_name', 'last_name',
+            'address', 'contact_number', 'role',
+            'preferred_vehicle', 'familiar_barangays'
+        ]
+        read_only_fields = ['id', 'email', 'role']  # Prevent users from changing these
+
+    def validate_familiar_barangays(self, value):
+        # Handle None or non-list values
+        if not value:
+            return []
+        if not isinstance(value, list):
+            raise serializers.ValidationError("Must be a list of barangay names.")
+        
+        valid_names = {name for _, name in LUCENA_BARANGAYS}
+        invalid = [b for b in value if b not in valid_names]
+        if invalid:
+            raise serializers.ValidationError(f"Invalid barangays: {', '.join(invalid)}")
+        return value
+    
+
+
 class CustomUserReadSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
         fields = [
             'id', 'email', 'first_name', 'last_name', 'middle_name',
             'contact_number', 'address', 'role', 'is_active', 'date_joined',
-            'is_staff', 'is_superuser'
+            'is_staff', 'is_superuser', 'profile_picture', 'preferred_vehicle', 'familiar_barangays'
         ]
+
+    def get_profile_picture(self, obj):
+        if obj.profile_picture:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_picture.url)
+            return obj.profile_picture.url
+        return None
+
+
+# ----------------------------
+# Custom User Serializer with Preferences (for Djoser / Profile)
+# ----------------------------
+
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -226,14 +318,24 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class StaffSerializer(serializers.ModelSerializer):
+    preferred_vehicle = serializers.SerializerMethodField()
+    familiar_barangays = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = [
-            'id', 'email', 'first_name', 'last_name',
-            'address', 'contact_number', 'role',
-            'is_active', 'date_joined'
-        ]
-        read_only_fields = ['date_joined']
+        fields = ['id', 'first_name', 'last_name', 'preferred_vehicle', 'familiar_barangays']
+
+    def get_preferred_vehicle(self, obj):
+        try:
+            return obj.staff_preference.preferred_vehicle.id if obj.staff_preference.preferred_vehicle else None
+        except StaffPreference.DoesNotExist:
+            return None
+
+    def get_familiar_barangays(self, obj):
+        try:
+            return obj.staff_preference.familiar_barangays or []
+        except StaffPreference.DoesNotExist:
+            return []
 
 
 # ----------------------------
@@ -345,6 +447,7 @@ class OrderAdminSerializer(OrderSerializer):
         required=False,
         allow_null=True
     )
+    # 👇 BARANGAY already inherited from OrderSerializer
 
     class Meta(OrderSerializer.Meta):
         fields = OrderSerializer.Meta.fields + [
@@ -361,51 +464,55 @@ class OrderAdminSerializer(OrderSerializer):
             for field in ['assigned_staff', 'assigned_vehicle', 'status']:
                 self.fields.pop(field, None)
 
+    # Inside OrderAdminSerializer class
     def validate(self, data):
         request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            raise serializers.ValidationError("Authentication required.")
+
         user = request.user
+        instance = self.instance
 
-        # 1. Only staff can update payment status
-        if 'is_paid' in data and not user.is_staff:
-            raise serializers.ValidationError({
-                "is_paid": "Only staff can update payment status."
-            })
+        # Prevent non-staff from editing staff-only fields
+        if not (user.is_staff or user.is_superuser):
+            # Allow only status and is_paid (with conditions)
+            allowed_fields = {'status'}
+            if instance and instance.payment_method == "Cash":
+                allowed_fields.add('is_paid')
+            
+            requested_fields = set(data.keys())
+            if not requested_fields.issubset(allowed_fields):
+                raise serializers.ValidationError(
+                    "Riders can only update 'status' and 'is_paid' (for Cash orders)."
+                )
 
-        # 2. Cannot un-pay after paid
-        if 'is_paid' in data and self.instance and self.instance.is_paid and not data['is_paid']:
-            raise serializers.ValidationError({
-                "is_paid": "Cannot mark an order as unpaid after it has been paid."
-            })
+        # Prevent marking as unpaid
+        if 'is_paid' in data and data['is_paid'] is False:
+            if instance and instance.is_paid:
+                raise serializers.ValidationError("Cannot mark a paid order as unpaid.")
+            if instance and instance.payment_method == "GCash":
+                raise serializers.ValidationError("GCash payment status can only be set by admin.")
 
-        # 3. Prevent direct jump from Pending → In Transit
-        if (
-            self.instance and
-            self.instance.status == 'Pending' and
-            data.get('status') == 'In Transit'
-        ):
-            raise serializers.ValidationError({
-                "status": "Cannot go directly from Pending to In Transit. Must first be Processing."
-            })
+        # Prevent riders from marking GCash as paid
+        if 'is_paid' in data and data['is_paid'] is True:
+            if instance and instance.payment_method == "GCash":
+                if not (user.is_staff or user.is_superuser):
+                    raise serializers.ValidationError("Only admin can approve GCash payments.")
 
-        # 4. Auto-set status to Processing when assigning staff or vehicle
-        if (
-            self.instance and
-            self.instance.status == 'Pending' and
-            not self.instance.assigned_staff and not self.instance.assigned_vehicle and
-            (
-                ('assigned_staff' in data and data['assigned_staff']) or
-                ('assigned_vehicle' in data and data['assigned_vehicle'])
-            )
-        ):
-            data['status'] = 'Processing'
+        # Status transition logic
+        if 'status' in data and instance:
+            new_status = data['status']
+            old_status = instance.status
 
-        # 5. Only staff or rider can set status to In Transit
-        if data.get('status') == 'In Transit':
-            user_role = getattr(user, 'role', '')
-            if not (user.is_staff or user_role in ['staff', 'rider']):
-                raise serializers.ValidationError({
-                    "status": "Only delivery staff can mark orders as In Transit."
-                })
+            # Only staff/rider can move to In Transit or Completed
+            if new_status in ['In Transit', 'Completed']:
+                if not (user.is_staff or getattr(user, 'role', '') in ['staff', 'rider']):
+                    raise serializers.ValidationError("Only delivery staff can update to this status.")
+
+            # Prevent going backward (e.g., Completed → In Transit)
+            status_order = {'Pending': 0, 'Processing': 1, 'In Transit': 2, 'Completed': 3}
+            if status_order.get(new_status, -1) < status_order.get(old_status, -1):
+                raise serializers.ValidationError("Cannot revert order status.")
 
         return data
 
@@ -434,15 +541,11 @@ class OrderAdminSerializer(OrderSerializer):
     def update(self, instance, validated_data):
         items_data = validated_data.pop('items', [])
 
-        # Apply all field updates
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        # Save using model's save() method → triggers side effects
-        # (vehicle availability, auto-paid, etc.)
         instance.save()
 
-        # Handle items only if provided
         if items_data:
             self._handle_order_items(instance, items_data)
 
@@ -492,9 +595,66 @@ class OrderAdminSerializer(OrderSerializer):
                 item.beverage.restore_stock(item.cases_ordered)
                 item.delete()
 
+
 # ----------------------------
 # Feedback Serializer
 # ----------------------------
 class FeedbackSerializer(serializers.Serializer):
     review_comment = serializers.CharField(max_length=500)
     review_rating = serializers.IntegerField(min_value=1, max_value=5)
+
+
+
+##############
+
+class StaffProfileSerializer(serializers.ModelSerializer):
+    preferred_vehicle = serializers.PrimaryKeyRelatedField(
+        queryset=Vehicle.objects.all(),
+        allow_null=True,
+        required=False
+    )
+    familiar_barangays = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        required=False,
+        allow_empty=True
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id', 'email', 'first_name', 'middle_name', 'last_name',
+            'address', 'contact_number',
+            'preferred_vehicle', 'familiar_barangays'
+        ]
+        read_only_fields = ['id', 'email']
+
+    def validate_familiar_barangays(self, value):
+        if not value:
+            return []
+        valid_names = {name for _, name in LUCENA_BARANGAYS}
+        invalid = [b for b in value if b not in valid_names]
+        if invalid:
+            raise serializers.ValidationError(f"Invalid barangays: {', '.join(invalid)}")
+        return value
+    
+
+
+class StaffPreferenceSerializer(serializers.ModelSerializer):
+    familiar_barangays = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        required=False,
+        allow_empty=True
+    )
+
+    class Meta:
+        model = StaffPreference
+        fields = ['preferred_vehicle', 'familiar_barangays']
+
+    def validate_familiar_barangays(self, value):
+        if not value:
+            return []
+        valid_names = {name for _, name in LUCENA_BARANGAYS}
+        invalid = [b for b in value if b not in valid_names]
+        if invalid:
+            raise serializers.ValidationError(f"Invalid barangays: {', '.join(invalid)}")
+        return value

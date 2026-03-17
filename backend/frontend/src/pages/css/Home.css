@@ -1,21 +1,61 @@
-/* Home Section - Hero Design */
+/* Golden Ratio Variables */
+:root {
+  --phi: 1.618;
+  --space-xs: 0.618rem;
+  --space-sm: 1rem;
+  --space-md: 1.618rem;
+  --space-lg: 2.618rem;
+  --space-xl: 4.236rem;
+  --space-2xl: 6.854rem;
+  
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.618rem;
+  --text-lg: 2.618rem;
+  --text-xl: 4.236rem;
+}
+
 .home-section {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #eeeeee 100%);
+  padding: var(--space-lg);
   position: relative;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e8f0f7 100%);
   overflow: hidden;
-  padding: 0 24px;
+}
+
+/* Subtle animated gradient overlay */
+.home-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(0, 0, 0, 0.02) 50%, 
+    transparent 100%);
+  animation: shimmer 15s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(50%);
+  }
 }
 
 .home-content {
-  max-width: 900px;
+  max-width: 42rem;
   text-align: center;
-  z-index: 10;
   position: relative;
-  animation: fadeInUp 0.8s ease-out;
+  z-index: 1;
+  animation: fadeInUp 1s ease-out;
 }
 
 @keyframes fadeInUp {
@@ -31,52 +71,56 @@
 
 .home-badge {
   display: inline-block;
-  background: #e3f2fd;
-  color: #1565c0;
-  padding: 8px 20px;
-  border-radius: 30px;
-  font-size: 14px;
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(192, 0, 0, 0.04); /* subtle red tint */
+  color: #c00000; /* mature red */
+  border-radius: 100px;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-bottom: 24px;
-  border: 1px solid rgba(21, 101, 192, 0.2);
+  margin-bottom: var(--space-lg);
+  border: 1px solid rgba(192, 0, 0, 0.1);
   animation: fadeIn 1s ease-out 0.2s both;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* ✅ CLEAN TITLE */
 .home-title {
-  color: #1a3a52 !important;
-  -webkit-text-fill-color: #1a3a52 !important;
-  background: none !important;
-  background-clip: border-box !important;
-  position: relative;
-  z-index: 999999999 !important;
+  font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
+  font-weight: 800; /* stronger than 700 for impact */
+  color: #1a1a1a; /* deeper than #0a0a0a for better contrast */
+  line-height: 1.2;
+  margin-bottom: var(--space-md);
+  letter-spacing: -0.02em;
+  animation: fadeIn 1s ease-out 0.4s both;
 }
 
 .home-subtitle {
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
-  color: #2c5282;
-  font-weight: 500;
-  margin: 0 0 12px 0;
+  font-size: var(--text-md);
+  color: #333333; /* richer than #2a2a2a */
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
   animation: fadeIn 1s ease-out 0.6s both;
 }
 
 .home-tagline {
-  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
-  color: #475569;
-  font-weight: 400;
-  margin: 0 0 40px 0;
+  font-size: var(--text-base);
+  color: #5a5a5a;
+  margin-bottom: var(--space-xl);
+  line-height: 1.618;
   animation: fadeIn 1s ease-out 0.8s both;
 }
 
 .home-cta {
   display: flex;
-  gap: 16px;
+  gap: var(--space-md);
   justify-content: center;
   flex-wrap: wrap;
   animation: fadeIn 1s ease-out 1s both;
@@ -87,94 +131,87 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 32px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: var(--space-md) var(--space-xl);
+  font-size: var(--text-base);
+  font-weight: 700;
   text-decoration: none;
-  border-radius: 30px;
+  border-radius: 8px;
   transition: all 0.3s ease;
-  min-width: 160px;
+  position: relative;
+  overflow: hidden;
+  min-width: 180px;
+  text-align: center;
+  font-family: inherit;
 }
 
 .btn-primary {
-  background: #1565c0;
-  color: white;
-  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.2);
+  background: #c00000; /* professional red */
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(192, 0, 0, 0.25);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
 }
 
 .btn-primary:hover {
-  background: #1e40af;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(21, 101, 192, 0.3);
+  background: #a00000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(192, 0, 0, 0.35);
 }
 
 .btn-secondary {
   background: transparent;
-  color: #1565c0;
-  border: 2px solid #1565c0;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
 }
 
 .btn-secondary:hover {
-  background: #f0f4f8;
-  transform: translateY(-3px);
+  background: #1a1a1a;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Decorative Elements - Removed */
-.home-decorative {
-  display: none;
-}
-
-/* Responsive Design */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .home-section {
-    min-height: 90vh;
-    padding: 0 20px;
+    padding: var(--space-md);
   }
-
-  .home-badge {
-    font-size: 12px;
-    padding: 6px 16px;
-    margin-bottom: 20px;
+  
+  .home-content {
+    max-width: 100%;
   }
-
-  .home-title {
-    margin-bottom: 16px;
-  }
-
-  .home-subtitle {
-    margin-bottom: 10px;
-  }
-
-  .home-tagline {
-    margin-bottom: 32px;
-  }
-
+  
   .home-cta {
-    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
   }
-
+  
   .btn-primary,
   .btn-secondary {
-    padding: 12px 28px;
-    font-size: 15px;
-    min-width: 140px;
+    width: 100%;
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
-  .home-section {
-    min-height: 85vh;
+  .home-title {
+    font-size: var(--text-lg);
   }
-
-  .home-cta {
-    flex-direction: column;
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
+  
+  .home-subtitle {
+    font-size: var(--text-base);
   }
 }

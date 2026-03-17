@@ -1,7 +1,7 @@
 // src/components/MyDelivery.jsx
 import React, { useEffect, useState } from "react";
 import "./css/MyDelivery.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MyDelivery = () => {
   const [orders, setOrders] = useState([]);
@@ -10,12 +10,11 @@ const MyDelivery = () => {
   const [selectedOrderIds, setSelectedOrderIds] = useState([]);
   const [toast, setToast] = useState(null);
 
-  // Get auth data
   const staffData = JSON.parse(localStorage.getItem("staff_data"));
   const myStaffId = staffData?.id;
   const token = localStorage.getItem("staff_token") || localStorage.getItem("rider_token");
+  const navigate = useNavigate();
 
-  // Fetch orders
   const fetchOrders = async () => {
     if (!token || !myStaffId) {
       setError("Authentication missing.");
@@ -32,7 +31,6 @@ const MyDelivery = () => {
 
       const data = await res.json();
 
-      // Filter: assigned to me + not completed
       const activeDeliveries = data.filter((order) => {
         let isAssignedToMe = false;
         if (typeof order.assigned_staff === 'object' && order.assigned_staff !== null) {
@@ -56,8 +54,67 @@ const MyDelivery = () => {
     fetchOrders();
   }, [myStaffId, token]);
 
-  // Handle individual status change
+  // ✅ Helper: Calculate total cases for an order
+  const getTotalCases = (order) => {
+    return order.items.reduce((sum, item) => {
+      return sum + parseFloat(item.cases_ordered || 0);
+    }, 0);
+  };
+
+  // ✅ Mark as delivered (not completed!)
+  const handleMarkDelivered = async (orderId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/orders/${orderId}/mark-delivered/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to mark as delivered");
+      }
+
+      const updatedOrder = await response.json();
+
+      setOrders((prev) =>
+        prev.map((order) => (order.id === orderId ? { ...order, status: "Delivered by Staff" } : order))
+          .filter((o) => o.status !== "Completed")
+      );
+
+      setToast({
+        message: `✅ Order #${orderId} marked as delivered!`,
+        type: "success",
+      });
+    } catch (err) {
+      setToast({
+        message: `❌ ${err.message || "Failed to mark delivered"}`,
+        type: "error",
+      });
+    }
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const handleStatusChange = async (orderId, newStatus) => {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+
+    // Prevent direct "Completed" for delivered orders
+    if (order.delivery_type === "Delivered" && newStatus === "Completed") {
+      alert("Delivered orders must be marked as 'Delivered' first. Customer will confirm receipt.");
+      return;
+    }
+
+    // ✅ Enforce 30-case minimum for "In Transit" (delivered orders only)
+    if (order.delivery_type === "Delivered" && newStatus === "In Transit") {
+      const totalCases = getTotalCases(order);
+      if (totalCases < 30) {
+        alert(`Order #${orderId} has only ${totalCases} case(s). Minimum 30 cases required for delivery dispatch.`);
+        return;
+      }
+    }
+
     try {
       const response = await fetch(`http://localhost:8000/api/orders/${orderId}/`, {
         method: "PATCH",
@@ -74,7 +131,7 @@ const MyDelivery = () => {
 
       setOrders((prev) =>
         prev.map((order) => (order.id === orderId ? updatedOrder : order))
-          .filter((o) => o.status !== "Completed") // Remove if completed
+          .filter((o) => o.status !== "Completed")
       );
 
       setToast({
@@ -90,14 +147,12 @@ const MyDelivery = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Toggle selection of one order
   const toggleSelect = (id) => {
     setSelectedOrderIds((prev) =>
       prev.includes(id) ? prev.filter((oid) => oid !== id) : [...prev, id]
     );
   };
 
-  // Select/Deselect All
   const toggleSelectAll = () => {
     if (selectedOrderIds.length === orders.length) {
       setSelectedOrderIds([]);
@@ -106,9 +161,30 @@ const MyDelivery = () => {
     }
   };
 
-  // Mark All Selected as "In Transit"
   const handleStartAllDeliveries = async () => {
     if (selectedOrderIds.length === 0) return;
+
+    // ✅ Check each selected order for 30-case minimum
+    const insufficientOrders = [];
+    for (const id of selectedOrderIds) {
+      const order = orders.find(o => o.id === id);
+      if (order && order.delivery_type === "Delivered") {
+        const totalCases = getTotalCases(order);
+        if (totalCases < 30) {
+          insufficientOrders.push({ id, cases: totalCases });
+        }
+      }
+    }
+
+    if (insufficientOrders.length > 0) {
+      const messages = insufficientOrders.map(o => `Order #${o.id}: ${o.cases} cases`);
+      alert(
+        `The following orders do not meet the 30-case minimum for delivery:\n\n` +
+        messages.join('\n') +
+        `\n\nPlease add more items or remove these orders.`
+      );
+      return;
+    }
 
     const confirm = window.confirm(
       `Start delivery for ${selectedOrderIds.length} order(s)?\n\nThis will mark them as "In Transit".`
@@ -129,13 +205,12 @@ const MyDelivery = () => {
         )
       );
 
-      // Refresh list after success
       setToast({
         message: `🚚 ${selectedOrderIds.length} order(s) marked as In Transit!`,
         type: "success",
       });
       setSelectedOrderIds([]);
-      fetchOrders(); // Refetch to sync state
+      fetchOrders();
     } catch (err) {
       setToast({
         message: "❌ Failed to start deliveries.",
@@ -145,28 +220,28 @@ const MyDelivery = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Status badge class helper
   const getStatusBadgeClass = (status) => {
-    return `delivery-status-badge status-${status.toLowerCase().replace(' ', '-')}`;
+    const map = {
+      Pending: "status-pending",
+      Processing: "status-processing",
+      "In Transit": "status-in-transit",
+      "Delivered by Staff": "status-delivered",
+      Completed: "status-completed",
+    };
+    return map[status] || "status-default";
   };
 
   return (
     <div className="my-delivery-container">
-      {/* Toast Notification */}
-      {toast && (
-        <div className={`toast ${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
+      {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
 
-      <h2 className="my-delivery-title">📦 My Deliveries</h2>
+      <h2 className="my-delivery-title">My Deliveries</h2>
 
-      {/* Bulk Action Bar */}
       {selectedOrderIds.length > 0 && (
         <div className="bulk-action-bar">
           <span>{selectedOrderIds.length} selected</span>
           <button onClick={handleStartAllDeliveries} className="btn-bulk-start">
-            🚀 Start All Deliveries
+            Start All Deliveries
           </button>
           <button onClick={() => setSelectedOrderIds([])} className="btn-clear">
             Clear
@@ -174,7 +249,6 @@ const MyDelivery = () => {
         </div>
       )}
 
-      {/* Select All Checkbox */}
       {orders.length > 0 && (
         <div className="select-all-control">
           <label>
@@ -188,7 +262,6 @@ const MyDelivery = () => {
         </div>
       )}
 
-      {/* Loading */}
       {loading ? (
         <div className="my-delivery-loading">
           <div className="spinner"></div>
@@ -209,41 +282,66 @@ const MyDelivery = () => {
                   <div>
                     <div className="order-id">Order #{order.id}</div>
                     <div className="customer-info">
-                      👤 <strong>{order.customer_name || "Customer"}</strong>
+                      <strong>{order.customer_name || "Customer"}</strong>
                     </div>
                     <div className="address-info">
-                      📍 {order.text_address || "Address not provided"}
+                      {order.address || "Address not provided"}
+                    </div>
+                    <div className="delivery-type">
+                      <span className="type-label">{order.delivery_type}</span>
+                    </div>
+                    {/* ✅ Show total cases for transparency */}
+                    <div className="order-cases">
+                      Total Cases: {getTotalCases(order).toFixed(1)}
                     </div>
                   </div>
-                  <div className={getStatusBadgeClass(order.status)}>
+                  <span className={`status-badge ${getStatusBadgeClass(order.status)}`}>
                     {order.status}
-                  </div>
+                  </span>
                 </div>
               </Link>
 
-              {/* Status Update Section */}
               <div className="status-update-section">
-                <label>Update Status:</label>
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                  disabled={order.status === "Completed"}
-                  className="status-select"
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Processing">Processing</option>
-                  <option value="In Transit">In Transit</option>
-                  <option value="Completed">Completed</option>
-                </select>
+                <label>Update Status</label>
+                <div className="select-wrapper">
+                  <select
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                    disabled={order.status === "Completed" || order.status === "Delivered by Staff"}
+                    className="status-select"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="In Transit">In Transit</option>
+                    {/* ✅ Only allow Completed for Pickup */}
+                    {order.delivery_type === "Pickup" && (
+                      <option value="Completed">Completed</option>
+                    )}
+                  </select>
+                  <span className="select-indicator">▼</span>
+                </div>
+
+                {/* ✅ Show "Mark as Delivered" only for delivered orders in transit */}
+                {order.delivery_type === "Delivered" && order.status === "In Transit" && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleMarkDelivered(order.id);
+                    }}
+                    className="btn-mark-delivered"
+                  >
+                    Mark as Delivered
+                  </button>
+                )}
               </div>
 
-              {/* Selection Checkbox */}
               <div className="selection-checkbox">
                 <input
                   type="checkbox"
                   checked={selectedOrderIds.includes(order.id)}
                   onChange={() => toggleSelect(order.id)}
-                  onClick={(e) => e.stopPropagation()} // Don't trigger link
+                  onClick={(e) => e.stopPropagation()}
                 />
               </div>
             </div>
@@ -251,12 +349,8 @@ const MyDelivery = () => {
         </div>
       )}
 
-      {/* Back Button */}
-      <button
-        onClick={() => window.history.back()}
-        className="back-btn"
-      >
-        ← Back
+      <button onClick={() => navigate(-1)} className="back-btn" aria-label="Go back">
+        ←
       </button>
     </div>
   );

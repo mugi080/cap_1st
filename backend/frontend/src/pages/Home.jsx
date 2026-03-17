@@ -6,8 +6,7 @@ const Home = () => {
     <div className="home-section">
       <div className="home-content">
         <div className="home-badge">Welcome to BottleFlow</div>
-        <h1 className="home-title">Where Every Bottle Finds Its Destination!</h1>
-
+        <h1 className="home-title">Salvacion Garay Bottled Drink Distributor</h1>   
 
         <p className="home-subtitle">
           Refreshing Supply, Efficient Delivery!

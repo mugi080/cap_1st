@@ -1,3 +1,4 @@
+// src/components/admin/AdminOrders.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -8,6 +9,8 @@ const AdminOrders = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [deliveryFilter, setDeliveryFilter] = useState('All');
+  const [dateFilter, setDateFilter] = useState('All');
   const [popup, setPopup] = useState({ message: '', type: '' });
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -21,6 +24,19 @@ const AdminOrders = () => {
     { value: 'Processing', label: 'Processing' },
     { value: 'In Transit', label: 'In Transit' },
     { value: 'Completed', label: 'Completed' },
+  ];
+
+  const DELIVERY_TYPE_CHOICES = [
+    { value: 'All', label: 'All Types' },
+    { value: 'Pickup', label: 'Pickup' },
+    { value: 'Delivered', label: 'Delivered' },
+  ];
+
+  const DATE_FILTER_CHOICES = [
+    { value: 'All', label: 'All Time' },
+    { value: 'Today', label: 'Today' },
+    { value: 'Last7Days', label: 'Last 7 Days' },
+    { value: 'LastMonth', label: 'Last Month' },
   ];
 
   const fetchAllOrders = async () => {
@@ -44,37 +60,69 @@ const AdminOrders = () => {
     const loadOrders = async () => {
       const data = await fetchAllOrders();
       if (data) {
-        const activeOrders = data.filter(order => order.status !== 'Completed');
-        setOrders(activeOrders);
-        setFilteredOrders(activeOrders);
+        const nonCompleted = data.filter(order => order.status !== 'Completed');
+        setOrders(nonCompleted);
+        setFilteredOrders(nonCompleted);
       }
     };
     loadOrders();
   }, []);
 
-  const filterOrders = (list, query, status) => {
+  const filterOrders = (list, query, status, delivery, date) => {
     return list.filter(order => {
       const matchesSearch =
         (order.customer_name?.toLowerCase().includes(query)) ||
         order.id.toString().includes(query);
       const matchesStatus = status === 'All' || order.status === status;
-      return matchesSearch && matchesStatus;
+      const matchesDelivery = delivery === 'All' || order.delivery_type === delivery;
+      
+      let matchesDate = true;
+      if (date !== 'All') {
+        const orderDate = new Date(order.created_at);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        if (date === 'Today') {
+          matchesDate = orderDate >= today;
+        } else if (date === 'Last7Days') {
+          const sevenDaysAgo = new Date(today);
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          matchesDate = orderDate >= sevenDaysAgo;
+        } else if (date === 'LastMonth') {
+          const thirtyDaysAgo = new Date(today);
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          matchesDate = orderDate >= thirtyDaysAgo;
+        }
+      }
+      
+      return matchesSearch && matchesStatus && matchesDelivery && matchesDate;
     });
   };
 
   const handleSearchChange = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    setFilteredOrders(filterOrders(orders, query, statusFilter));
+    setFilteredOrders(filterOrders(orders, query, statusFilter, deliveryFilter, dateFilter));
   };
 
   const handleStatusFilterChange = (e) => {
     const status = e.target.value;
     setStatusFilter(status);
-    setFilteredOrders(filterOrders(orders, searchQuery, statusFilter));
+    setFilteredOrders(filterOrders(orders, searchQuery, status, deliveryFilter, dateFilter));
   };
 
-  // ✅ Generic update function
+  const handleDeliveryFilterChange = (e) => {
+    const delivery = e.target.value;
+    setDeliveryFilter(delivery);
+    setFilteredOrders(filterOrders(orders, searchQuery, statusFilter, delivery, dateFilter));
+  };
+
+  const handleDateFilterChange = (e) => {
+    const date = e.target.value;
+    setDateFilter(date);
+    setFilteredOrders(filterOrders(orders, searchQuery, statusFilter, deliveryFilter, date));
+  };
+
   const updateOrderField = async (orderId, field, value) => {
     try {
       await axios.patch(
@@ -83,12 +131,11 @@ const AdminOrders = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Refetch to stay consistent
       const freshOrders = await fetchAllOrders();
       if (freshOrders) {
         const activeFresh = freshOrders.filter(o => o.status !== 'Completed');
         setOrders(activeFresh);
-        setFilteredOrders(filterOrders(activeFresh, searchQuery, statusFilter));
+        setFilteredOrders(filterOrders(activeFresh, searchQuery, statusFilter, deliveryFilter, dateFilter));
       }
 
       if (selectedOrder && selectedOrder.id === orderId) {
@@ -105,37 +152,29 @@ const AdminOrders = () => {
     setTimeout(() => setPopup({ message: '', type: '' }), 4000);
   };
 
-  // ✅ Handle Status Change with Payment Warning
   const handleStatusChange = (orderId, newStatus) => {
     const order = orders.find(o => o.id === orderId);
     if (!order) return;
 
     if (newStatus === 'Completed') {
       if (order.is_paid) {
-        // Already paid — safe to complete
         updateOrderField(orderId, 'status', 'Completed');
       } else {
-        // Not paid — ask for confirmation
         const confirmed = window.confirm(
-          `Order #${orderId} has NOT been marked as paid.\n\n` +
-          `If the customer just paid in cash, click OK to mark as COMPLETED (and paid).\n\n` +
-          `If not, click Cancel and follow up first.`
+          `Order #${orderId} is NOT paid.\n\n` +
+          `Mark as COMPLETED anyway? (Only if paid in cash just now.)`
         );
         if (confirmed) {
           updateOrderField(orderId, 'status', 'Completed');
         }
       }
     } else {
-      // Any other status change — allow freely
       updateOrderField(orderId, 'status', newStatus);
     }
   };
 
   const handleMarkAsPaid = (orderId) => {
-    const confirmed = window.confirm(
-      `Mark Order #${orderId} as PAID?\n\n` +
-      `Only do this if payment has been received (cash/GCash).`
-    );
+    const confirmed = window.confirm(`Mark Order #${orderId} as PAID?`);
     if (confirmed) {
       updateOrderField(orderId, 'is_paid', true);
     }
@@ -153,7 +192,7 @@ const AdminOrders = () => {
       if (freshOrders) {
         const activeFresh = freshOrders.filter(o => o.status !== 'Completed');
         setOrders(activeFresh);
-        setFilteredOrders(filterOrders(activeFresh, searchQuery, statusFilter));
+        setFilteredOrders(filterOrders(activeFresh, searchQuery, statusFilter, deliveryFilter, dateFilter));
       }
 
       if (selectedOrder && selectedOrder.id === orderId) {
@@ -164,12 +203,12 @@ const AdminOrders = () => {
       }
 
       setPopup({
-        message: approve ? '✅ GCash payment approved!' : '❌ GCash payment rejected.',
+        message: approve ? '✅ GCash approved!' : '❌ GCash rejected.',
         type: 'success'
       });
     } catch (err) {
       setPopup({
-        message: `Failed to ${approve ? 'approve' : 'reject'} GCash payment.`,
+        message: `GCash action failed.`,
         type: 'error'
       });
     }
@@ -177,7 +216,7 @@ const AdminOrders = () => {
   };
 
   const handleDelete = async (orderId) => {
-    if (!window.confirm(`Delete order #${orderId}?`)) return;
+    if (!window.confirm(`Delete order #${orderId}? This cannot be undone.`)) return;
 
     try {
       await axios.delete(`http://localhost:8000/api/orders/${orderId}/`, {
@@ -186,7 +225,7 @@ const AdminOrders = () => {
 
       const updated = orders.filter(o => o.id !== orderId);
       setOrders(updated);
-      setFilteredOrders(filterOrders(updated, searchQuery, statusFilter));
+      setFilteredOrders(filterOrders(updated, searchQuery, statusFilter, deliveryFilter, dateFilter));
 
       if (selectedOrder && selectedOrder.id === orderId) {
         setIsModalOpen(false);
@@ -240,40 +279,40 @@ const AdminOrders = () => {
                   <th>Payment</th>
                   <td>
                     {selectedOrder.payment_method || 'N/A'}
-                    {selectedOrder.payment_method === "GCash" ? (
+                    {selectedOrder.payment_method === "GCash" && (
                       <>
                         <br />
-                        <button
-                          className="btn-link"
-                          onClick={() => window.open(`http://localhost:8000${selectedOrder.gcash_receipt}`, "_blank")}
-                        >
-                          View Receipt
-                        </button>
-                        {!selectedOrder.is_paid ? (
+                        {selectedOrder.gcash_receipt ? (
+                          <button
+                            className="btn-link"
+                            onClick={() => window.open(`http://localhost:8000${selectedOrder.gcash_receipt}`, "_blank")}
+                          >
+                            View Receipt
+                          </button>
+                        ) : (
+                          <em>No receipt</em>
+                        )}
+                        {!selectedOrder.is_paid && (
                           <>
                             <button className="btn-accept" onClick={() => handleGCashDecision(selectedOrder.id, true)}>
-                              Accept Payment
+                              Accept
                             </button>
                             <button className="btn-reject" onClick={() => handleGCashDecision(selectedOrder.id, false)}>
                               Reject
                             </button>
                           </>
-                        ) : (
-                          <span className="paid-badge">✅ Paid</span>
                         )}
                       </>
-                    ) : (
-                      !selectedOrder.is_paid ? (
-                        <button
-                          className="btn-mark-paid"
-                          onClick={() => handleMarkAsPaid(selectedOrder.id)}
-                        >
-                          Mark as Paid
-                        </button>
-                      ) : (
-                        <span className="paid-badge">✅ Paid</span>
-                      )
                     )}
+                    {selectedOrder.payment_method !== "GCash" && !selectedOrder.is_paid && (
+                      <button
+                        className="btn-mark-paid"
+                        onClick={() => handleMarkAsPaid(selectedOrder.id)}
+                      >
+                        Mark as Paid
+                      </button>
+                    )}
+                    {selectedOrder.is_paid && <span className="paid-badge">✅ Paid</span>}
                   </td>
                 </tr>
                 <tr><th>Total</th><td>₱ {safeParseFloat(selectedOrder.total_price).toFixed(2)}</td></tr>
@@ -293,9 +332,10 @@ const AdminOrders = () => {
                     )}
                   </td>
                 </tr>
-                <tr><th>Delivery</th><td>{selectedOrder.delivery_type || 'N/A'}</td></tr>
+                <tr><th>Delivery Type</th><td>{selectedOrder.delivery_type === 'Delivered' ? 'Delivered' : 'Pickup'}</td></tr>
                 <tr><th>Phone</th><td>{selectedOrder.contact_number || 'N/A'}</td></tr>
-                <tr><th>Address</th><td>{selectedOrder.text_address || selectedOrder.address || 'Pickup'}</td></tr>
+                <tr><th>Address</th><td>{selectedOrder.text_address || selectedOrder.address || 'N/A'}</td></tr>
+                <tr><th>Barangay</th><td>{selectedOrder.barangay || 'N/A'}</td></tr>
               </tbody>
             </table>
 
@@ -305,7 +345,7 @@ const AdminOrders = () => {
                 <thead>
                   <tr>
                     <th>Product</th>
-                    <th>Qty (Cases)</th>
+                    <th>Cases</th>
                     <th>Price/Case</th>
                     <th>Total</th>
                   </tr>
@@ -313,14 +353,13 @@ const AdminOrders = () => {
                 <tbody>
                   {selectedOrder.items.map((item, i) => {
                     const cases = safeParseFloat(item.cases_ordered);
-                    const pricePerCase = safeParseFloat(item.price_per_case || item.price);
-                    const total = (cases * pricePerCase).toFixed(2);
+                    const pricePerCase = safeParseFloat(item.price_per_case || item.price || 0);
                     return (
                       <tr key={i}>
                         <td>{item.beverage_name || 'Unknown'}</td>
                         <td>{cases}</td>
                         <td>₱ {pricePerCase.toFixed(2)}</td>
-                        <td>₱ {total}</td>
+                        <td>₱ {(cases * pricePerCase).toFixed(2)}</td>
                       </tr>
                     );
                   })}
@@ -333,8 +372,7 @@ const AdminOrders = () => {
         </div>
       )}
 
-      {/* Page Header */}
-      <h1>📦 Admin Orders</h1>
+      <h1>Admin Orders</h1>
 
       <div className="search-section">
         <input
@@ -346,16 +384,35 @@ const AdminOrders = () => {
       </div>
 
       <div className="orders-actions">
-        <div>
+        <div className="filters-group">
           <label>
-            Status:
+            <span className="filter-label">Status</span>
             <select value={statusFilter} onChange={handleStatusFilterChange}>
               {ORDER_STATUS_CHOICES.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
           </label>
+          
+          <label>
+            <span className="filter-label">Type</span>
+            <select value={deliveryFilter} onChange={handleDeliveryFilterChange}>
+              {DELIVERY_TYPE_CHOICES.map((d) => (
+                <option key={d.value} value={d.value}>{d.label}</option>
+              ))}
+            </select>
+          </label>
+          
+          <label>
+            <span className="filter-label">Date Range</span>
+            <select value={dateFilter} onChange={handleDateFilterChange}>
+              {DATE_FILTER_CHOICES.map((d) => (
+                <option key={d.value} value={d.value}>{d.label}</option>
+              ))}
+            </select>
+          </label>
         </div>
+        
         <div className="orders-buttons">
           <Link to="/admin/select-items">
             <button className="btn-create">Create Order</button>
@@ -368,7 +425,6 @@ const AdminOrders = () => {
 
       {error && <p className="error-text">{error}</p>}
 
-      {/* Orders Table */}
       {filteredOrders.length > 0 ? (
         <div className="table-wrapper">
           <table className="orders-table">
@@ -380,7 +436,7 @@ const AdminOrders = () => {
                 <th>Paid?</th>
                 <th>Total</th>
                 <th>Status</th>
-                <th>Delivery</th>
+                <th>Type</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -388,13 +444,17 @@ const AdminOrders = () => {
               {filteredOrders.map((order) => (
                 <tr key={order.id}>
                   <td>
-                    <Link className="link-btn" to={`/admin/order-details/${order.id}`}>
+                    <Link
+                      to={`/admin/order-details/${order.id}`}
+                      className="link-btn"
+                      style={{ display: 'inline', verticalAlign: 'middle' }}
+                    >
                       {order.customer_name || 'Anonymous'}
                     </Link>
                   </td>
                   <td>{new Date(order.created_at).toLocaleString()}</td>
                   <td>
-                    {order.payment_method || 'N/A'}
+                    {order.payment_method}
                     {order.payment_method === "GCash" && (
                       <span className={`payment-status ${order.is_paid ? 'paid' : 'pending'}`}>
                         {order.is_paid ? 'Paid' : 'Pending'}
@@ -409,7 +469,7 @@ const AdminOrders = () => {
                         className="inline-mark-paid"
                         onClick={() => handleMarkAsPaid(order.id)}
                       >
-                        Mark Paid
+                        Mark as Paid
                       </button>
                     ) : (
                       <span className="badge-pending">⏳ Pending</span>
@@ -417,18 +477,21 @@ const AdminOrders = () => {
                   </td>
                   <td>₱ {safeParseFloat(order.total_price).toFixed(2)}</td>
                   <td>
-                    <select
-                      value={order.status || 'Pending'}
-                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      disabled={order.payment_method === 'GCash' && !order.is_paid}
-                      className="status-select"
-                    >
-                      {ORDER_STATUS_CHOICES.filter(s => s.value !== 'All').map((s) => (
-                        <option key={s.value} value={s.value}>{s.label}</option>
-                      ))}
-                    </select>
+                    <div className="select-wrapper">
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        disabled={order.payment_method === 'GCash' && !order.is_paid}
+                        className="status-select"
+                      >
+                        {ORDER_STATUS_CHOICES.filter(s => s.value !== 'All').map((s) => (
+                          <option key={s.value} value={s.value}>{s.label}</option>
+                        ))}
+                      </select>
+                      <span className="select-arrow">▼</span>
+                    </div>
                   </td>
-                  <td>{order.delivery_type || 'N/A'}</td>
+                  <td>{order.delivery_type === 'Delivered' ? 'Delivered' : 'Pickup'}</td>
                   <td>
                     <div className="action-buttons">
                       <button className="btn-view" onClick={() => openModal(order.id)}>
@@ -445,7 +508,7 @@ const AdminOrders = () => {
           </table>
         </div>
       ) : (
-        <p>No active orders found.</p>
+        <p>No orders found.</p>
       )}
     </div>
   );

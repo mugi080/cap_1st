@@ -1,3 +1,4 @@
+// src/pages/ordering/OrderHistory.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./css/OrderHistory.css";
@@ -8,27 +9,52 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [feedbackState, setFeedbackState] = useState({});
   const [hoverRating, setHoverRating] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("access");
 
   const fetchCompletedOrders = async () => {
+    if (!token) {
+      alert("Please log in to view order history.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await axios.get(`${API_ROOT}/api/order-history/`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      console.log("Raw Orders:", res.data);
 
       const completed = res.data.filter(
         (order) => order.status?.toLowerCase() === "completed"
       );
-
-      console.log("Filtered Completed Orders:", completed);
-
       setOrders(completed);
     } catch (error) {
       console.error("Fetch error", error);
+      alert("Failed to load order history.");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchCompletedOrders();
+  }, []);
+
+  const formatCases = (cases) => {
+    const num = Number(cases);
+    if (isNaN(num) || num <= 0) return "0 cases";
+    if (num === 1) return "1 case";
+    if (Number.isInteger(num)) return `${num} cases`;
+
+    const whole = Math.floor(num);
+    const fraction = num - whole;
+
+    if (Math.abs(fraction - 0.5) < 0.01) {
+      return whole === 0 ? "½ case" : `${whole}½ cases`;
+    }
+
+    return `${num.toFixed(1)} cases`;
   };
 
   const handleStarHover = (orderId, rating) => {
@@ -64,11 +90,7 @@ const OrderHistory = () => {
           review_comment: data.comment,
           review_rating: data.rating,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Feedback submitted!");
       fetchCompletedOrders();
@@ -77,73 +99,73 @@ const OrderHistory = () => {
     }
   };
 
+  // ✅ Opens YOUR receipt page (not the API PDF)
   const downloadReceipt = (orderId) => {
-    const token = localStorage.getItem("access_token");
-    const receiptUrl = `${API_ROOT}/api/orders/${orderId}/receipt/`;
-
-    const link = document.createElement("a");
-    link.href = receiptUrl;
-    link.download = `Order_${orderId}_receipt.pdf`;
-    link.click();
+    const token = localStorage.getItem("access");
+    window.open(`/receipt?orderId=${orderId}&token=${token}`, "_blank");
   };
-
-  useEffect(() => {
-    fetchCompletedOrders();
-  }, []);
 
   const renderStars = (orderId) => {
     const hover = hoverRating[orderId] || 0;
     const selected = feedbackState[orderId]?.rating || 0;
-
     return (
       <div className="star-rating">
-        {[...Array(5)].map((_, i) => {
-          const filled = (hover || selected) > i;
-          return (
-            <span
-              key={i}
-              className={`star ${filled ? "filled" : ""}`}
-              onMouseEnter={() => handleStarHover(orderId, i + 1)}
-              onMouseLeave={() => handleStarHover(orderId, 0)}
-              onClick={() => handleStarClick(orderId, i + 1)}
-            >
-              ★
-            </span>
-          );
-        })}
+        {[...Array(5)].map((_, i) => (
+          <span
+            key={i}
+            className={`star ${hover > i || selected > i ? "filled" : ""}`}
+            onMouseEnter={() => handleStarHover(orderId, i + 1)}
+            onMouseLeave={() => handleStarHover(orderId, 0)}
+            onClick={() => handleStarClick(orderId, i + 1)}
+          >
+            ★
+          </span>
+        ))}
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="order-history-page">
+        <h1>📜 Order History</h1>
+        <p className="loading">Loading your order history...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="order-history-page">
       <h1>📜 Order History</h1>
 
       {orders.length === 0 ? (
-        <p>🍹 No completed orders found. Complete an order to leave feedback!</p>
+        <div className="empty-state">
+          <p>🍹 No completed orders found.</p>
+          <p>Complete an order to leave feedback!</p>
+        </div>
       ) : (
         orders.map((order) => (
           <div key={order.id} className="order-history-card">
             <div className="order-header">
               <strong>Order #{order.id}</strong>
-              <button
-                type="button"
-                onClick={() => downloadReceipt(order.id)}
-                className="download-receipt-btn"
-              >
+              <button onClick={() => downloadReceipt(order.id)} className="download-receipt-btn">
                 📄 Download Receipt
               </button>
             </div>
 
             <div className="order-details">
-              <p>{new Date(order.created_at).toLocaleString()}</p>
-              <div>
+              <p className="order-date">{new Date(order.created_at).toLocaleString()}</p>
+              <div className="detail-row">
                 <span>Total:</span>
-                <span className="order-total">₱{order.total_price.toFixed(2)}</span>
+                <span className="order-total">₱{parseFloat(order.total_price).toFixed(2)}</span>
               </div>
-              <div>
+              <div className="detail-row">
                 <span>Payment:</span>
-                <strong>{order.payment_method}</strong>
+                <strong>{order.payment_method || "N/A"}</strong>
+              </div>
+              <div className="detail-row">
+                <span>Status:</span>
+                <span className="status-completed">Completed</span>
               </div>
             </div>
 
@@ -153,9 +175,9 @@ const OrderHistory = () => {
                 {order.items.map((item, i) => (
                   <li key={i}>
                     <span>
-                      {item.quantity}x {item.beverage.name}
+                      {formatCases(item.cases_ordered)} {item.beverage_name || `Beverage #${item.beverage}`}
                     </span>
-                    <span>₱{item.total_price.toFixed(2)}</span>
+                    <span>₱{parseFloat(item.total_price).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
@@ -178,17 +200,15 @@ const OrderHistory = () => {
                 <label>Your Feedback:</label>
                 <textarea
                   required
-                  rows="4"
-                  placeholder="Share your experience with this order..."
+                  rows="3"
+                  placeholder="How was your order? Share your experience..."
                   value={feedbackState[order.id]?.comment || ""}
                   onChange={(e) => handleFeedbackChange(order.id, e.target.value)}
                 />
-
                 <div className="star-rating-container">
                   <label>Rating:</label>
                   {renderStars(order.id)}
                 </div>
-
                 <button type="submit" className="submit-feedback-btn">
                   Submit Feedback
                 </button>

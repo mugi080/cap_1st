@@ -1,12 +1,13 @@
-/* OrderHistory.css - Receipt-Style with Orange-Red Theme */
+/* OrderHistory.css - Black & White Theme, Matched to OrderView, Green Completed Status */
 
 .order-history-page {
   max-width: 800px;
   margin: 2rem auto;
   padding: 32px 16px;
-  background: linear-gradient(135deg, #fff5f0 0%, #ffe8e0 50%, #fff0eb 100%);
+  background: #ffffff;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #000000;
 }
 
 .order-history-page h1 {
@@ -14,28 +15,33 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 40px;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #000000;
   letter-spacing: -0.5px;
 }
 
-/* Empty State */
-.order-history-page > p {
+/* Loading / Empty State */
+.order-history-page > p,
+.loading,
+.empty-state {
   text-align: center;
-  color: #6b7280;
-  font-size: 1.1rem;
   padding: 48px 24px;
-  background: white;
+  background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  color: #333333;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
-/* Order Card - Receipt Style */
+.empty-state p {
+  margin: 8px 0;
+  color: #666666;
+}
+
+/* Order Card - Receipt Style (Matching OrderView) */
 .order-history-card {
-  background: white;
-  border: 3px dashed #d1d5db;
+  background: #ffffff;
+  border: 3px dashed #cccccc;
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
@@ -45,8 +51,7 @@
 }
 
 .order-history-card:hover {
-  border-color: #ff6b35;
-  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.2);
+  border-color: #000000;
   transform: translateY(-4px);
 }
 
@@ -62,8 +67,8 @@
     90deg,
     transparent,
     transparent 8px,
-    white 8px,
-    white 16px
+    #ffffff 8px,
+    #ffffff 16px
   );
   border-radius: 12px 12px 0 0;
 }
@@ -81,31 +86,32 @@
 .order-header strong {
   font-size: 1.25rem;
   font-family: 'Courier New', monospace;
-  color: #1f2937;
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 /* Download Receipt Button */
 .download-receipt-btn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: #000000;
+  color: #ffffff;
   padding: 8px 16px;
-  border: none;
+  border: 2px solid #000000;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
   font-size: 0.875rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .download-receipt-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  background: #ffffff;
+  color: #000000;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Order Details Section */
@@ -113,7 +119,7 @@
   margin-bottom: 20px;
   font-family: 'Courier New', monospace;
   font-size: 0.9375rem;
-  color: #4b5563;
+  color: #333333;
   line-height: 1.8;
 }
 
@@ -121,27 +127,47 @@
   margin: 8px 0;
 }
 
-.order-details div {
-  margin: 6px 0;
+.order-date {
+  color: #666666;
+  font-size: 0.875rem;
+}
+
+.detail-row {
   display: flex;
   justify-content: space-between;
   padding: 4px 0;
+  margin: 6px 0;
 }
 
-.order-details div strong {
-  color: #1f2937;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.detail-row span:first-child {
+  color: #666666;
+}
+
+.detail-row strong,
+.detail-row span:last-child {
+  color: #000000;
+  font-weight: bold;
 }
 
 /* Order Total */
 .order-total {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #000000;
   font-weight: 800;
   font-size: 1.125rem;
+}
+
+/* Status - GREEN for Completed */
+.status-completed {
+  background: #10b981;
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 }
 
 /* Items Section */
@@ -152,14 +178,14 @@
   border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-family: 'Courier New', monospace;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .order-items strong {
   display: block;
   margin-bottom: 12px;
   font-size: 1rem;
-  color: #1f2937;
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 1px;
   border-bottom: 2px dashed #d1d5db;
@@ -180,7 +206,7 @@
   border-bottom: 1px dotted #d1d5db;
   transition: background 0.2s ease;
   font-size: 0.875rem;
-  color: #374151;
+  color: #333333;
 }
 
 .order-items li:last-child {
@@ -188,7 +214,7 @@
 }
 
 .order-items li:hover {
-  background: rgba(255, 107, 53, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   border-radius: 4px;
   padding-left: 8px;
   padding-right: 8px;
@@ -196,17 +222,17 @@
 
 .order-items li span:last-child {
   font-weight: 700;
-  color: #1f2937;
+  color: #000000;
   white-space: nowrap;
 }
 
 /* Feedback Section - Submitted */
 .feedback-submitted {
   margin-top: 20px;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  background: #f0fdf4;
   padding: 16px;
   border-radius: 12px;
-  border: 2px solid #a7f3d0;
+  border: 2px solid #10b981;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
 }
 
@@ -223,7 +249,7 @@
 }
 
 .feedback-rating {
-  color: #fbbf24;
+  color: #000000;
   font-size: 1.25rem;
   letter-spacing: 2px;
 }
@@ -242,17 +268,17 @@
 .feedback-form {
   margin-top: 20px;
   padding: 20px;
-  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  background: #fafafa;
   border-radius: 12px;
-  border: 2px solid #fed7aa;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .feedback-form label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #92400e;
+  color: #000000;
   text-transform: uppercase;
   font-size: 0.875rem;
   letter-spacing: 0.5px;
@@ -262,7 +288,7 @@
   width: 100%;
   padding: 12px;
   border-radius: 8px;
-  border: 2px solid #fbbf24;
+  border: 2px solid #cccccc;
   resize: vertical;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 0.9375rem;
@@ -272,8 +298,8 @@
 
 .feedback-form textarea:focus {
   outline: none;
-  border-color: #ff6b35;
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
 .feedback-form textarea::placeholder {
@@ -307,8 +333,8 @@
 }
 
 .star.filled {
-  color: #fbbf24;
-  text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+  color: #000000;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .star:hover {
@@ -318,25 +344,26 @@
 /* Submit Button */
 .submit-feedback-btn {
   margin-top: 16px;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff4757 100%);
-  color: white;
+  background: #000000;
+  color: #ffffff;
   padding: 12px 24px;
-  border: none;
+  border: 2px solid #000000;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
   font-size: 0.9375rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .submit-feedback-btn:hover {
-  background: linear-gradient(135deg, #ff5722 0%, #ff3838 100%);
-  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+  background: #ffffff;
+  color: #000000;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .submit-feedback-btn:active {
@@ -419,7 +446,8 @@
     font-size: 22px;
   }
 
-  .submit-feedback-btn {
+  .submit-feedback-btn,
+  .download-receipt-btn {
     padding: 10px 20px;
     font-size: 0.875rem;
   }
@@ -439,23 +467,4 @@
 
 .order-history-card {
   animation: fadeIn 0.5s ease-out;
-}
-
-/* Custom Scrollbar */
-.order-history-page::-webkit-scrollbar {
-  width: 8px;
-}
-
-.order-history-page::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.order-history-page::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff6b35 0%, #ff4757 100%);
-  border-radius: 10px;
-}
-
-.order-history-page::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ff5722 0%, #ff3838 100%);
 }

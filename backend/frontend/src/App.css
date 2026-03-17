@@ -1,18 +1,29 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* === Shared Design Tokens (Option 1 – Clean Blue Minimal) === */
+/* === Shared Design Tokens – Beverage Business Admin (Mature & Clean) === */
 :root {
-  --primary-gradient: linear-gradient(135deg, #1a73e8 0%, #4dabf7 100%);
-  --text-primary: #0d1b2a;
-  --text-secondary: #4a5568;
+  /* Primary Brand – Deep Red (Coca-Cola inspired, but professional) */
+  --primary-gradient: linear-gradient(135deg, #c00000 0%, #e00000 100%);
+  --primary-color: #c00000;
+  --primary-hover: #a00000;
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.2);
+  /* Text Colors – High contrast, adult-friendly */
+  --text-primary: #1a1a1a;        /* Near-black for readability */
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --text-light: #888888;
 
-  --shadow-light: 0 4px 20px rgba(26, 115, 232, 0.25);
+  /* Backgrounds – Warm off-whites */
+  --glass-bg: rgba(250, 250, 250, 0.92);
+  --glass-border: rgba(220, 220, 220, 0.4);
 
-  --font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  /* Shadows – Subtle depth */
+  --shadow-light: 0 4px 16px rgba(192, 0, 0, 0.15);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* Font Family – Professional & Legible */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+                 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
 }
 
 /* === Admin Layout === */
@@ -22,7 +33,7 @@
   flex-direction: row;
 }
 
-/* === Admin Navbar (Glass Blue Style) === */
+/* === Admin Navbar (Warm Glass Style) === */
 .admin-navbar {
   position: fixed;
   top: 0;
@@ -34,8 +45,8 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--glass-border);
   box-shadow: var(--shadow-light);
   font-family: var(--font-family);
@@ -44,16 +55,13 @@
 
 .admin-navbar h1 {
   font-size: 1.4rem;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
 }
 
-/* Navbar buttons (Blue Gradient) */
+/* Navbar buttons – Beverage Red */
 .admin-navbar button {
   padding: 8px 16px;
   font-family: var(--font-family);
@@ -65,20 +73,20 @@
   background: var(--primary-gradient);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(26, 115, 232, 0.3);
+  box-shadow: 0 3px 8px rgba(192, 0, 0, 0.25);
 }
 
 .admin-navbar button:hover {
-  background: linear-gradient(135deg, #0d6efd 0%, #74b4fa 100%);
+  background: linear-gradient(135deg, var(--primary-hover), #cc0000);
   transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(26, 115, 232, 0.35);
+  box-shadow: 0 5px 12px rgba(192, 0, 0, 0.3);
 }
 
 .admin-navbar button:active {
   transform: translateY(0);
 }
 
-/* === Admin Sidebar (Glass Blue Panel) === */
+/* === Admin Sidebar === */
 .admin-sidebar {
   width: 250px;
   position: fixed;
@@ -87,8 +95,8 @@
   height: calc(100vh - 60px);
   padding: 24px 16px;
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-right: 1px solid var(--glass-border);
   box-shadow: var(--shadow-light);
   box-sizing: border-box;
@@ -113,23 +121,23 @@
   padding: 12px 16px;
   color: var(--text-primary);
   text-decoration: none;
-  border-radius: 16px;
+  border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
   transition: all 0.25s ease;
+  gap: 10px;
 }
 
 .admin-sidebar a:hover {
-  background: rgba(26, 115, 232, 0.12);
-  color: #1a73e8;
+  background: rgba(192, 0, 0, 0.08);
+  color: var(--primary-color);
   transform: translateX(4px);
 }
 
-/* Active link */
 .admin-sidebar a.active {
-  background: rgba(26, 115, 232, 0.2);
-  color: #1a73e8;
-  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.25);
+  background: rgba(192, 0, 0, 0.15);
+  color: var(--primary-color);
+  box-shadow: 0 2px 6px rgba(192, 0, 0, 0.2);
 }
 
 /* === Main Content Area === */
@@ -141,9 +149,10 @@
   box-sizing: border-box;
   transition: margin-left 0.3s ease;
   font-family: var(--font-family);
+  color: var(--text-primary);
 }
 
-/* Scroll adjustment for anchor links */
+/* Scroll adjustment */
 .landing-page section {
   scroll-margin-top: 70px;
 }
@@ -152,10 +161,34 @@
 @media (max-width: 768px) {
   .admin-sidebar {
     width: 200px;
+    top: 60px;
+    height: calc(100vh - 60px);
   }
 
   .admin-content {
     margin-left: 0;
     padding: 16px;
+  }
+}
+/* === Strict Content Well – Ensures Perfect Horizontal Alignment === */
+.section-content {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .section-content {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .section-content {
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
   }
 }

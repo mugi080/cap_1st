@@ -3,15 +3,15 @@
 .staff-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Full screen */
-  max-width: 414px; /* iPhone Pro Max width */
+  height: 100vh;
+  max-width: 414px;
   margin: 0 auto;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #fff;
   color: #1a1a1a;
   box-sizing: border-box;
-  padding: 16px;
-  overflow-y: auto; /* Allow scrolling */
+  padding: 0 16px; /* ✅ Only left/right padding — NO top/bottom */
+  overflow-y: auto;
 }
 
 /* Header */
@@ -164,7 +164,7 @@
 /* Back Button */
 .back-btn {
   padding: 16px;
-  background-color: #6c757d;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 14px;
@@ -252,4 +252,10 @@
     padding: 14px;
     font-size: 1rem;
   }
+}
+/* Reset browser defaults */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
